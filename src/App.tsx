@@ -3,7 +3,17 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
 import Index from "./pages/Index";
+import AboutPage from "./pages/AboutPage";
+import SportsPage from "./pages/SportsPage";
+import SportDetailPage from "./pages/SportDetailPage";
+import HowWeTeachPage from "./pages/HowWeTeachPage";
+import ImpactPage from "./pages/ImpactPage";
+import BlogPage from "./pages/BlogPage";
+import GetInvolvedPage from "./pages/GetInvolvedPage";
+import ContactPage from "./pages/ContactPage";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -15,8 +25,18 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/sports" element={<SportsPage />} />
+            <Route path="/sports/:sport" element={<SportDetailPage />} />
+            <Route path="/how-we-teach" element={<HowWeTeachPage />} />
+            <Route path="/impact" element={<ImpactPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/get-involved" element={<GetInvolvedPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+          </Route>
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

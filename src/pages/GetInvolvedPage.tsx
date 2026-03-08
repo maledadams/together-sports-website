@@ -4,18 +4,6 @@ import ScrollReveal from "@/components/ScrollReveal";
 const GetInvolvedPage = () => {
   return (
     <div className="overflow-hidden">
-      <section className="relative py-24 md:py-32 bg-primary">
-        <div className="absolute inset-0 scratchy-overlay" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <ScrollReveal>
-            <p className="font-body font-bold uppercase tracking-[0.3em] text-white/70 text-sm mb-4">Join the Movement</p>
-            <h1 className="font-heading text-6xl md:text-8xl font-black uppercase leading-[0.85] text-white">
-              Get <span className="text-stroke-light">Involved</span>
-            </h1>
-          </ScrollReveal>
-        </div>
-      </section>
-
       {/* Ways to help */}
       <section className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

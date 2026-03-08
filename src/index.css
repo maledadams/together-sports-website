@@ -74,12 +74,26 @@
     @apply bg-background text-foreground font-body antialiased;
   }
 
+  p {
+    @apply text-lg md:text-xl;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-black tracking-tight;
   }
 }
 
 @layer components {
+  @keyframes partner-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform: translate3d(-33.3333%, 0, 0);
+    }
+  }
+
   .angled-divider {
     clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
   }
@@ -178,6 +192,10 @@
 }
 
 @layer utilities {
+  .animate-partner-marquee {
+    animation: partner-marquee 24s linear infinite;
+  }
+
   .text-balance {
     text-wrap: balance;
   }

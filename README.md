@@ -1,73 +1,101 @@
-# Welcome to your Lovable project
+# Together Sports Website
 
-## Project info
+Together Sports is a Vite + React site with a live Supabase-backed content editor for testimonials, partners, team cards, and the experiences page.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Tech Stack
 
-## How can I edit this code?
+- Vite
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn-ui
+- Supabase
+- Vercel
 
-There are several ways of editing your application.
+## Local Development
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Install dependencies:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Run the normal Vite dev server:
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+This project is pinned to `http://localhost:8081` for regular Vite development.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+If you want the app to use Vercel environment variables directly, run:
 
-**Use GitHub Codespaces**
+```sh
+npx vercel dev
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+That runs the site on `http://localhost:3000`.
 
-## What technologies are used for this project?
+## Environment Variables
 
-This project is built with:
+Create Vercel project env vars for:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```sh
+VITE_SUPABASE_URL
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+```
 
-## How can I deploy this project?
+For local non-Vercel testing, you can also place them in `.env.local`. See [.env.example](./.env.example).
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## Live Content System
 
-## Can I connect a custom domain to my Lovable project?
+How it works now:
 
-Yes, you can!
+- Public pages load live content from Supabase at runtime.
+- `/admin` requires Supabase sign-in when env vars are configured.
+- `Save Live` writes the whole content object to `site_content`.
+- Uploaded images go into `site-media`.
+- No redeploy is needed for content changes.
+- `Export JSON` / `Import JSON` still exist as backup tools.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Admin Route
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+The admin editor lives at:
+
+```txt
+/admin
+```
+
+When Supabase is configured:
+
+- sign in by magic link
+- edit testimonials, partners, and team content
+- upload images to Supabase Storage
+- save the current draft live to Supabase
+
+When Supabase is not configured:
+
+- the editor falls back to the default repo seed content
+
+## Backup Content Workflow
+
+JSON backup tools still exist if you want snapshots of the content:
+
+- Export from `/admin`
+- Save the file as `content/editable-content.json`
+- Run `npm run apply:content`
+- Commit `content/editable-content.json` and `src/data/editableContentSeed.ts`
+
+This backup flow is optional now that live content is stored in Supabase.
+
+## Build
+
+Create a production build with:
+
+```sh
+npm run build
+```
+
+## Deployment
+
+Deploy the project on Vercel and add the two `VITE_SUPABASE_*` environment variables in the Vercel project settings for `Development`, `Preview`, and `Production`.

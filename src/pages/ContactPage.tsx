@@ -1,19 +1,20 @@
 import ScrollReveal from "@/components/ScrollReveal";
+import PageHero from "@/components/PageHero";
 import contactImage from "@/assets/contact-community.jpg";
 
 const ContactPage = () => {
   return (
     <div className="overflow-hidden">
-      <section className="relative py-24 md:py-32 bg-card scratchy-overlay">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Reach Out</p>
-            <h1 className="font-heading text-6xl md:text-8xl font-black uppercase leading-[0.85]">
-              Contact <span className="text-stroke">Us</span>
-            </h1>
-          </ScrollReveal>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Reach Out"
+        title={
+          <>
+            <span className="whitespace-nowrap">Contact </span>
+            <span className="whitespace-nowrap text-[#4f74d6]">Us</span>
+          </>
+        }
+        description="Questions, partnerships, volunteering, or support requests, reach out and we will point you in the right direction."
+      />
 
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

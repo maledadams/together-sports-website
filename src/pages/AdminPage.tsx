@@ -1,160 +1,821 @@
-import { useState } from "react";
+import { useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { Download, FileText, Images, LoaderCircle, LogOut, RefreshCcw, Save, Upload, Users } from "lucide-react";
+import { toast } from "@/components/ui/sonner";
 import ScrollReveal from "@/components/ScrollReveal";
-import { LayoutDashboard, FileText, Image, BarChart3, Calendar, Star } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { mediaLibrary } from "@/data/mediaLibrary";
+import type { Experience, ExperienceType } from "@/data/experiences";
+import type { Partner } from "@/data/partners";
+import type { TeamPerson, TeamSection } from "@/data/team";
+import { useEditableContent } from "@/lib/editable-content";
 
-type Tab = "posts" | "media" | "stats" | "events" | "sports";
+const inputClass =
+  "w-full border border-border bg-white px-4 py-3 text-foreground font-body focus:border-accent focus:outline-none";
+const textareaClass = `${inputClass} min-h-[120px] resize-y`;
+const labelClass = "font-body font-bold uppercase tracking-[0.16em] text-xs text-muted-foreground";
 
-const AdminPage = () => {
-  const [activeTab, setActiveTab] = useState<Tab>("posts");
+const createId = (prefix: string) =>
+  `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-  const tabs = [
-    { id: "posts" as Tab, label: "Blog Posts", icon: FileText },
-    { id: "media" as Tab, label: "Media", icon: Image },
-    { id: "stats" as Tab, label: "Impact Stats", icon: BarChart3 },
-    { id: "events" as Tab, label: "Events", icon: Calendar },
-    { id: "sports" as Tab, label: "Sports", icon: Star },
-  ];
+const EditorCard = ({ children }: { children: ReactNode }) => (
+  <div className="border border-border bg-card p-6 md:p-8 space-y-5">{children}</div>
+);
+
+const ImageField = ({
+  label,
+  value,
+  onChange,
+  onUpload,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  onUpload: (file: File) => Promise<string>;
+}) => {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const nextValue = await onUpload(file);
+      onChange(nextValue);
+      toast.success(`${file.name} uploaded.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to upload that image.");
+    } finally {
+      setIsUploading(false);
+      event.target.value = "";
+    }
+  };
 
   return (
-    <div className="min-h-screen">
-      <section className="py-12 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <LayoutDashboard className="text-accent" size={24} />
-                <h1 className="font-heading text-3xl font-black uppercase">Admin Dashboard</h1>
-              </div>
-              <p className="text-muted-foreground text-sm">Manage your Together Sports content</p>
-            </div>
-            <Link to="/" className="px-4 py-2 bg-primary text-white font-heading font-bold uppercase text-sm tracking-wider hover:scale-105 transition-all">
-              View Site →
-            </Link>
+    <div className="space-y-3">
+      <p className={labelClass}>{label}</p>
+      <div className="w-full h-40 border border-border bg-white overflow-hidden flex items-center justify-center">
+        {value ? (
+          <img src={value} alt={label} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-muted-foreground text-sm">No image selected</span>
+        )}
+      </div>
+      <select
+        className={inputClass}
+        value={mediaLibrary.some((item) => item.src === value) ? value : ""}
+        onChange={(event) => {
+          if (event.target.value) {
+            onChange(event.target.value);
+          }
+        }}
+      >
+        <option value="">Choose from existing site images</option>
+        {mediaLibrary.map((item) => (
+          <option key={item.id} value={item.src}>
+            {item.label}
+          </option>
+        ))}
+      </select>
+      <input
+        type="url"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="Paste an image URL or leave the selected asset path"
+        className={inputClass}
+      />
+      <label className="block">
+        <span className="sr-only">Upload image file</span>
+        <input type="file" accept="image/*" onChange={handleFileSelect} className={inputClass} disabled={isUploading} />
+      </label>
+      {isUploading ? <p className="text-sm text-muted-foreground">Uploading image...</p> : null}
+    </div>
+  );
+};
+
+const TestimonialFields = ({
+  item,
+  onChange,
+  onUpload,
+}: {
+  item: Experience;
+  onChange: (next: Experience) => void;
+  onUpload: (file: File) => Promise<string>;
+}) => {
+  const type = item.type;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <p className={labelClass}>Content Type</p>
+        <select
+          className={inputClass}
+          value={type}
+          onChange={(event) => onChange({ ...item, type: event.target.value as ExperienceType })}
+        >
+          <option value="quote">Athlete Quote</option>
+          <option value="parent">Parent Quote</option>
+          <option value="photo">Photo</option>
+          <option value="video">Video</option>
+        </select>
+      </div>
+
+      {(type === "quote" || type === "parent") ? (
+        <div className="space-y-2">
+          <p className={labelClass}>Sport</p>
+          <input
+            className={inputClass}
+            value={item.sport || ""}
+            onChange={(event) => onChange({ ...item, sport: event.target.value })}
+            placeholder="Tennis"
+          />
+        </div>
+      ) : null}
+
+      {(type === "quote" || type === "parent") ? (
+        <>
+          <div className="space-y-2">
+            <p className={labelClass}>Name</p>
+            <input
+              className={inputClass}
+              value={item.name || ""}
+              onChange={(event) => onChange({ ...item, name: event.target.value })}
+              placeholder="Name"
+            />
           </div>
+          <div className="space-y-2">
+            <p className={labelClass}>Age / Label</p>
+            <input
+              className={inputClass}
+              value={item.age || ""}
+              onChange={(event) => onChange({ ...item, age: event.target.value })}
+              placeholder="16 or Parent"
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <p className={labelClass}>Quote</p>
+            <textarea
+              className={textareaClass}
+              value={item.quote || ""}
+              onChange={(event) => onChange({ ...item, quote: event.target.value })}
+              placeholder="Quote text"
+            />
+          </div>
+        </>
+      ) : null}
+
+      {type === "photo" ? (
+        <>
+          <div className="md:col-span-2">
+            <ImageField
+              label="Photo"
+              value={item.image || ""}
+              onChange={(value) => onChange({ ...item, image: value })}
+              onUpload={onUpload}
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <p className={labelClass}>Caption</p>
+            <textarea
+              className={textareaClass}
+              value={item.caption || ""}
+              onChange={(event) => onChange({ ...item, caption: event.target.value })}
+              placeholder="Caption"
+            />
+          </div>
+        </>
+      ) : null}
+
+      {type === "video" ? (
+        <>
+          <div className="space-y-2 md:col-span-2">
+            <p className={labelClass}>Video Embed URL</p>
+            <input
+              className={inputClass}
+              value={item.videoUrl || ""}
+              onChange={(event) => onChange({ ...item, videoUrl: event.target.value })}
+              placeholder="https://www.youtube.com/embed/..."
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <p className={labelClass}>Video Title</p>
+            <input
+              className={inputClass}
+              value={item.videoTitle || ""}
+              onChange={(event) => onChange({ ...item, videoTitle: event.target.value })}
+              placeholder="Video title"
+            />
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+};
+
+const AdminPage = () => {
+  const {
+    experiences,
+    partners,
+    teamSections,
+    setExperiences,
+    setPartners,
+    setTeamSections,
+    resetAll,
+    saveContent,
+    refreshContent,
+    uploadImage,
+    exportContent,
+    importContent,
+    hasUnsavedChanges,
+    isLoadingContent,
+    isSaving,
+    isSupabaseConfigured,
+    isAuthenticated,
+    authLoading,
+    userEmail,
+    signInWithMagicLink,
+    signOut,
+  } = useEditableContent();
+
+  const [activeTab, setActiveTab] = useState("testimonials");
+  const [statusMessage, setStatusMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [isSendingMagicLink, setIsSendingMagicLink] = useState(false);
+  const importInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleExport = () => {
+    const exportFile = exportContent();
+    const blob = new Blob([JSON.stringify(exportFile, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "editable-content.json";
+    link.click();
+    URL.revokeObjectURL(url);
+    setStatusMessage("Exported editable-content.json as a backup of the current live draft.");
+    toast.success("JSON exported.");
+  };
+
+  const handleImport = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const raw = await file.text();
+      importContent(JSON.parse(raw));
+      setStatusMessage(`Imported ${file.name} into the current draft.`);
+      toast.success(`${file.name} imported.`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to import that JSON file.";
+      setStatusMessage(message);
+      toast.error(message);
+    } finally {
+      event.target.value = "";
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      await saveContent();
+      setStatusMessage("Live content saved to Supabase.");
+      toast.success("Live content saved.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to save content.";
+      setStatusMessage(message);
+      toast.error(message);
+    }
+  };
+
+  const handleRefresh = async () => {
+    try {
+      await refreshContent();
+      setStatusMessage("Pulled the latest live content from Supabase.");
+      toast.success("Live content refreshed.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to refresh content.";
+      setStatusMessage(message);
+      toast.error(message);
+    }
+  };
+
+  const handleMagicLink = async () => {
+    if (!email.trim()) {
+      toast.error("Enter an email first.");
+      return;
+    }
+
+    setIsSendingMagicLink(true);
+
+    try {
+      await signInWithMagicLink(email.trim());
+      setStatusMessage(`Magic link sent to ${email.trim()}.`);
+      toast.success("Magic link sent.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to send magic link.";
+      setStatusMessage(message);
+      toast.error(message);
+    } finally {
+      setIsSendingMagicLink(false);
+    }
+  };
+
+  const updateExperience = (id: string, next: Experience) => {
+    setExperiences((current) => current.map((item) => (item.id === id ? next : item)));
+  };
+
+  const updatePartner = (id: string, field: keyof Partner, value: string) => {
+    setPartners((current) => current.map((item) => (item.id === id ? { ...item, [field]: value } : item)));
+  };
+
+  const updateSection = (sectionId: string, next: TeamSection) => {
+    setTeamSections((current) => current.map((section) => (section.id === sectionId ? next : section)));
+  };
+
+  const updatePerson = (sectionId: string, personId: string, next: TeamPerson) => {
+    setTeamSections((current) =>
+      current.map((section) =>
+        section.id === sectionId
+          ? { ...section, people: section.people.map((person) => (person.id === personId ? next : person)) }
+          : section,
+      ),
+    );
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="text-center space-y-4">
+          <LoaderCircle className="mx-auto animate-spin text-primary" size={40} />
+          <p className="text-muted-foreground">Checking admin access...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isSupabaseConfigured && !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background">
+        <section className="py-20 md:py-28">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="border border-border bg-card p-8 md:p-10 space-y-6">
+              <div>
+                <p className="font-body font-bold uppercase tracking-[0.3em] text-primary text-sm mb-3">Admin Access</p>
+                <h1 className="font-heading text-4xl md:text-6xl font-black uppercase mb-4">Sign In To Edit</h1>
+                <p className="text-muted-foreground">
+                  This admin route is powered by Supabase. Enter your email and we will send you a magic link to open
+                  `/admin` with edit access.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <p className={labelClass}>Email</p>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={handleMagicLink}
+                  disabled={isSendingMagicLink}
+                  className="px-5 py-3 bg-primary text-white font-heading font-bold uppercase tracking-wider text-sm disabled:opacity-60"
+                >
+                  {isSendingMagicLink ? "Sending..." : "Send Magic Link"}
+                </button>
+                <Link
+                  to="/"
+                  className="px-5 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase tracking-wider text-sm"
+                >
+                  Back To Site
+                </Link>
+              </div>
+
+              {statusMessage ? <p className="text-sm text-primary">{statusMessage}</p> : null}
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <section className="py-14 border-b border-border bg-card">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="font-body font-bold uppercase tracking-[0.3em] text-primary text-sm mb-3">
+                {isSupabaseConfigured ? "Live Supabase Editor" : "Local Edit Mode"}
+              </p>
+              <h1 className="font-heading text-4xl md:text-6xl font-black uppercase mb-4">Website Playground</h1>
+              <p className="text-muted-foreground max-w-3xl">
+                Edit testimonials, partner logos and links, team categories, and staff cards without touching code.
+                {isSupabaseConfigured
+                  ? " Save when you want those changes live on the deployed site."
+                  : " Supabase is not configured, so this session is using draft-only local data."}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/"
+                className="px-5 py-3 bg-primary text-white font-heading font-bold uppercase tracking-wider text-sm"
+              >
+                View Site
+              </Link>
+              <Link
+                to="/experiences"
+                className="px-5 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase tracking-wider text-sm"
+              >
+                View Experiences
+              </Link>
+              <button
+                type="button"
+                onClick={handleRefresh}
+                className="px-5 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase tracking-wider text-sm inline-flex items-center gap-2"
+              >
+                <RefreshCcw size={16} />
+                Refresh
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving || (isSupabaseConfigured && !hasUnsavedChanges)}
+                className="px-5 py-3 bg-accent text-white font-heading font-bold uppercase tracking-wider text-sm inline-flex items-center gap-2 disabled:opacity-60"
+              >
+                {isSaving ? <LoaderCircle size={16} className="animate-spin" /> : <Save size={16} />}
+                Save Live
+              </button>
+              <button
+                type="button"
+                onClick={handleExport}
+                className="px-5 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase tracking-wider text-sm inline-flex items-center gap-2"
+              >
+                <Download size={16} />
+                Export JSON
+              </button>
+              <button
+                type="button"
+                onClick={() => importInputRef.current?.click()}
+                className="px-5 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase tracking-wider text-sm inline-flex items-center gap-2"
+              >
+                <Upload size={16} />
+                Import JSON
+              </button>
+              {isSupabaseConfigured && isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    signOut().then(
+                      () => toast.success("Signed out."),
+                      (error) => toast.error(error instanceof Error ? error.message : "Unable to sign out."),
+                    );
+                  }}
+                  className="px-5 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase tracking-wider text-sm inline-flex items-center gap-2"
+                >
+                  <LogOut size={16} />
+                  Sign Out
+                </button>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm("Reset the current draft back to the default site content?")) {
+                    resetAll();
+                  }
+                }}
+                className="px-5 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase tracking-wider text-sm"
+              >
+                Reset Draft
+              </button>
+            </div>
+          </div>
+
+          <input
+            ref={importInputRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={handleImport}
+            className="hidden"
+          />
+          <p className="mt-5 text-sm text-muted-foreground">
+            Source: {isSupabaseConfigured ? "Supabase live content" : "default repo seed"} | Draft:{" "}
+            {hasUnsavedChanges ? "unsaved changes" : "up to date"}
+            {userEmail ? ` | Signed in as ${userEmail}` : ""}
+          </p>
+          {isLoadingContent ? <p className="mt-2 text-sm text-muted-foreground">Loading live content...</p> : null}
+          {statusMessage ? <p className="mt-2 text-sm text-primary">{statusMessage}</p> : null}
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-wrap gap-2 mb-8">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 font-heading font-bold uppercase text-sm tracking-wider transition-all ${
-                activeTab === tab.id
-                  ? "bg-accent text-white"
-                  : "bg-card text-muted-foreground hover:text-foreground border border-border"
-              }`}
-            >
-              <tab.icon size={16} />
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="h-auto flex-wrap justify-start gap-2 bg-transparent p-0 mb-8">
+            <TabsTrigger value="testimonials" className="px-4 py-3 data-[state=active]:bg-primary data-[state=active]:text-white">
+              <FileText size={16} className="mr-2" />
+              Testimonials
+            </TabsTrigger>
+            <TabsTrigger value="partners" className="px-4 py-3 data-[state=active]:bg-primary data-[state=active]:text-white">
+              <Images size={16} className="mr-2" />
+              Partners
+            </TabsTrigger>
+            <TabsTrigger value="team" className="px-4 py-3 data-[state=active]:bg-primary data-[state=active]:text-white">
+              <Users size={16} className="mr-2" />
+              Team
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Posts */}
-        {activeTab === "posts" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-2xl font-black uppercase">Blog Posts</h2>
-              <button className="px-4 py-2 bg-accent text-white font-heading font-bold uppercase text-sm hover:scale-105 transition-all">
-                + New Post
-              </button>
-            </div>
-            {["Why Every Kid Needs a Second Serve", "Summer Camp Registration Now Open", "Meet Coach Rodriguez"].map((post, i) => (
-              <div key={i} className="p-4 bg-card border border-border flex items-center justify-between">
-                <div>
-                  <h3 className="font-heading font-bold text-lg">{post}</h3>
-                  <p className="text-muted-foreground text-sm">Published · Feb {20 - i * 5}, 2026</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="px-3 py-1.5 bg-primary/20 text-primary font-body text-sm hover:bg-primary/30 transition-colors">Edit</button>
-                  <button className="px-3 py-1.5 bg-destructive/20 text-destructive font-body text-sm hover:bg-destructive/30 transition-colors">Delete</button>
-                </div>
+          <TabsContent value="testimonials">
+            <ScrollReveal>
+              <div className="flex flex-wrap gap-3 mb-8">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExperiences((current) => [
+                      ...current,
+                      { id: createId("quote"), type: "quote", sport: "Tennis", name: "New Name", age: "16", quote: "New quote" },
+                    ])
+                  }
+                  className="px-4 py-3 bg-primary text-white font-heading font-bold uppercase text-sm tracking-wider"
+                >
+                  + Add Quote
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExperiences((current) => [
+                      ...current,
+                      { id: createId("parent"), type: "parent", sport: "Tennis", name: "Parent Name", quote: "Parent quote" },
+                    ])
+                  }
+                  className="px-4 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase text-sm tracking-wider"
+                >
+                  + Add Parent
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExperiences((current) => [
+                      ...current,
+                      { id: createId("photo"), type: "photo", image: "", caption: "New photo caption" },
+                    ])
+                  }
+                  className="px-4 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase text-sm tracking-wider"
+                >
+                  + Add Photo
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExperiences((current) => [
+                      ...current,
+                      { id: createId("video"), type: "video", videoUrl: "", videoTitle: "New video" },
+                    ])
+                  }
+                  className="px-4 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase text-sm tracking-wider"
+                >
+                  + Add Video
+                </button>
               </div>
-            ))}
-          </div>
-        )}
+            </ScrollReveal>
 
-        {/* Media */}
-        {activeTab === "media" && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-2xl font-black uppercase">Homepage Media</h2>
-              <button className="px-4 py-2 bg-accent text-white font-heading font-bold uppercase text-sm hover:scale-105 transition-all">
-                + Upload
-              </button>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {["Hero Image", "Tennis", "Basketball", "Football"].map((name) => (
-                <div key={name} className="aspect-video bg-card border border-border flex items-center justify-center">
-                  <p className="text-muted-foreground text-sm font-body">{name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Stats */}
-        {activeTab === "stats" && (
-          <div>
-            <h2 className="font-heading text-2xl font-black uppercase mb-6">Impact Statistics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                { label: "Youth Served", value: "2,500+" },
-                { label: "Communities", value: "15" },
-                { label: "Return Rate", value: "98%" },
-                { label: "Sports Programs", value: "4" },
-              ].map((stat) => (
-                <div key={stat.label} className="p-4 bg-card border border-border flex items-center justify-between">
-                  <span className="text-muted-foreground font-body">{stat.label}</span>
-                  <div className="flex items-center gap-3">
-                    <span className="font-heading text-2xl font-black text-accent">{stat.value}</span>
-                    <button className="px-3 py-1.5 bg-primary/20 text-primary font-body text-sm">Edit</button>
+            <div className="space-y-6">
+              {experiences.map((item) => (
+                <EditorCard key={item.id}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="font-heading text-2xl font-black uppercase">
+                        {item.type === "quote" && "Athlete Quote"}
+                        {item.type === "parent" && "Parent Quote"}
+                        {item.type === "photo" && "Photo Item"}
+                        {item.type === "video" && "Video Item"}
+                      </p>
+                      <p className="text-muted-foreground text-sm">{item.id}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setExperiences((current) => current.filter((entry) => entry.id !== item.id))}
+                      className="px-4 py-2 border border-border bg-white text-foreground font-heading font-bold uppercase text-xs tracking-wider"
+                    >
+                      Remove
+                    </button>
                   </div>
-                </div>
+
+                  <TestimonialFields item={item} onChange={(next) => updateExperience(item.id, next)} onUpload={uploadImage} />
+                </EditorCard>
               ))}
             </div>
-          </div>
-        )}
+          </TabsContent>
 
-        {/* Events */}
-        {activeTab === "events" && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-2xl font-black uppercase">Events</h2>
-              <button className="px-4 py-2 bg-accent text-white font-heading font-bold uppercase text-sm hover:scale-105 transition-all">
-                + New Event
-              </button>
+          <TabsContent value="partners">
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPartners((current) => [
+                      ...current,
+                      { id: createId("partner"), name: "Partner Name", href: "https://", logo: "" },
+                    ])
+                  }
+                  className="px-4 py-3 bg-primary text-white font-heading font-bold uppercase text-sm tracking-wider"
+                >
+                  + Add Partner
+                </button>
+              </div>
+
+              {partners.map((partner) => (
+                <EditorCard key={partner.id}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="font-heading text-2xl font-black uppercase">{partner.name}</p>
+                      <p className="text-muted-foreground text-sm">{partner.id}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPartners((current) => current.filter((item) => item.id !== partner.id))}
+                      className="px-4 py-2 border border-border bg-white text-foreground font-heading font-bold uppercase text-xs tracking-wider"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className={labelClass}>Partner Name</p>
+                      <input
+                        className={inputClass}
+                        value={partner.name}
+                        onChange={(event) => updatePartner(partner.id, "name", event.target.value)}
+                        placeholder="Partner name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className={labelClass}>Partner Link</p>
+                      <input
+                        className={inputClass}
+                        value={partner.href}
+                        onChange={(event) => updatePartner(partner.id, "href", event.target.value)}
+                        placeholder="https://..."
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <ImageField
+                        label="Partner Logo"
+                        value={partner.logo}
+                        onChange={(value) => updatePartner(partner.id, "logo", value)}
+                        onUpload={uploadImage}
+                      />
+                    </div>
+                  </div>
+                </EditorCard>
+              ))}
             </div>
-            {["Summer Camp 2026", "Basketball Tournament", "Tennis Clinic"].map((event, i) => (
-              <div key={i} className="p-4 bg-card border border-border flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="font-heading font-bold text-lg">{event}</h3>
-                  <p className="text-muted-foreground text-sm">March {10 + i * 7}, 2026</p>
-                </div>
-                <button className="px-3 py-1.5 bg-primary/20 text-primary font-body text-sm">Edit</button>
-              </div>
-            ))}
-          </div>
-        )}
+          </TabsContent>
 
-        {/* Sports */}
-        {activeTab === "sports" && (
-          <div>
-            <h2 className="font-heading text-2xl font-black uppercase mb-6">Toggle Featured Sport</h2>
-            {["Tennis", "Basketball", "Football", "Golf"].map((sport, i) => (
-              <div key={sport} className="p-4 bg-card border border-border flex items-center justify-between mb-3">
-                <span className="font-heading font-bold text-lg">{sport}</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" defaultChecked={i === 0} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-border rounded-full peer-checked:bg-accent transition-colors relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></div>
-                </label>
+          <TabsContent value="team">
+            <div className="space-y-8">
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setTeamSections((current) => [
+                      ...current,
+                      { id: createId("section"), title: "New Category", color: "#4f74d6", people: [] },
+                    ])
+                  }
+                  className="px-4 py-3 bg-primary text-white font-heading font-bold uppercase text-sm tracking-wider"
+                >
+                  + Add Category
+                </button>
               </div>
-            ))}
-          </div>
-        )}
+              {teamSections.map((section) => (
+                <EditorCard key={section.id}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="font-heading text-2xl font-black uppercase">{section.title}</p>
+                      <p className="text-muted-foreground text-sm">{section.id}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setTeamSections((current) => current.filter((item) => item.id !== section.id))}
+                      className="px-4 py-2 border border-border bg-white text-foreground font-heading font-bold uppercase text-xs tracking-wider"
+                    >
+                      Remove Category
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className={labelClass}>Category Title</p>
+                      <input
+                        className={inputClass}
+                        value={section.title}
+                        onChange={(event) => updateSection(section.id, { ...section, title: event.target.value })}
+                        placeholder="Staff"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className={labelClass}>Accent Color</p>
+                      <input
+                        className={inputClass}
+                        value={section.color}
+                        onChange={(event) => updateSection(section.id, { ...section, color: event.target.value })}
+                        placeholder="#4f74d6"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    {section.people.map((person) => (
+                      <div key={person.id} className="border border-border bg-white p-5 space-y-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="font-heading text-xl font-black uppercase">{person.name}</p>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateSection(section.id, {
+                                ...section,
+                                people: section.people.filter((item) => item.id !== person.id),
+                              })
+                            }
+                            className="px-4 py-2 border border-border bg-card text-foreground font-heading font-bold uppercase text-xs tracking-wider"
+                          >
+                            Remove Card
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <p className={labelClass}>Name</p>
+                            <input
+                              className={inputClass}
+                              value={person.name}
+                              onChange={(event) => updatePerson(section.id, person.id, { ...person, name: event.target.value })}
+                              placeholder="Name"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <p className={labelClass}>Role</p>
+                            <input
+                              className={inputClass}
+                              value={person.role}
+                              onChange={(event) => updatePerson(section.id, person.id, { ...person, role: event.target.value })}
+                              placeholder="Role"
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <ImageField
+                              label="Card Image"
+                              value={person.image}
+                              onChange={(value) => updatePerson(section.id, person.id, { ...person, image: value })}
+                              onUpload={uploadImage}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateSection(section.id, {
+                          ...section,
+                          people: [
+                            ...section.people,
+                            {
+                              id: createId("person"),
+                              name: "New Name",
+                              role: "New Role",
+                              image: "",
+                              alt: "Team member",
+                            },
+                          ],
+                        })
+                      }
+                      className="px-4 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase text-sm tracking-wider"
+                    >
+                      + Add Card
+                    </button>
+                  </div>
+                </EditorCard>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

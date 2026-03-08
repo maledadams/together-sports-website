@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
 import tennisAction from "@/assets/tennis-action.jpg";
@@ -37,9 +38,112 @@ const sportData: Record<string, { name: string; image: string; tagline: string; 
   },
 };
 
+type TennisSession = {
+  id: string;
+  name: string;
+  locationName: string;
+  coachName: string;
+  levelLabel: string;
+  nextSessionLabel: string;
+  dateLabel: string;
+  timeLabel: string;
+  link: string;
+};
+
+const tennisDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
+
+const tennisSessionFormatter = new Intl.DateTimeFormat("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+});
+
+const tennisTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+const formatClockTime = (time24?: string) => {
+  if (!time24) {
+    return "TBA";
+  }
+
+  const [hours, minutes] = time24.split(":").map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return tennisTimeFormatter.format(date);
+};
+
+const fetchUstaSessionsDirect = async (signal: AbortSignal): Promise<TennisSession[]> => {
+  const filtersResponse = await fetch(
+    "https://playtennis.usta.com/togethertennis/Coaching/GetSearchFilters?subCategory=GroupCoaching",
+    { signal }
+  );
+
+  if (!filtersResponse.ok) {
+    throw new Error("Unable to load tennis filters.");
+  }
+
+  const rawFilters = await filtersResponse.json();
+  const filtersData = typeof rawFilters === "string" ? JSON.parse(rawFilters) : rawFilters;
+
+  const searchResponse = await fetch(
+    "https://prd-usta-kube.clubspark.pro/unified-search-api/api/Search/classic-coaching/Query",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        options: {
+          size: 12,
+          from: 0,
+          sortKey: "date",
+          // USTA/ClubSpark returns these two fields flipped in the filters payload.
+          latitude: filtersData.longitude,
+          longitude: filtersData.latitude,
+        },
+        filters: filtersData.filters.background,
+      }),
+      signal,
+    }
+  );
+
+  if (!searchResponse.ok) {
+    throw new Error("Unable to load tennis sessions.");
+  }
+
+  const searchData = await searchResponse.json();
+  return (searchData.searchResults ?? []).map((result: any) => {
+    const item = result.item;
+    const nextSessionDate = new Date(item.nextDateTime);
+    const coachName = [item.leader?.givenName, item.leader?.familyName].filter(Boolean).join(" ");
+    const levels = (item.levels ?? []).map((level: { name: string }) => level.name).filter(Boolean);
+
+    return {
+      id: item.id,
+      name: item.name,
+      locationName: item.location?.name ?? "TBA",
+      coachName: coachName || "TBA",
+      levelLabel: levels.length > 0 ? levels.join(", ") : "All levels",
+      nextSessionLabel: tennisSessionFormatter.format(nextSessionDate),
+      dateLabel: tennisDateFormatter.format(nextSessionDate),
+      timeLabel: `${tennisTimeFormatter.format(nextSessionDate)} - ${formatClockTime(item.endTime)}`,
+      link: `https://playtennis.usta.com/togethertennis/Coaching/Session/${item.id}`,
+    } satisfies TennisSession;
+  });
+};
+
 const SportDetailPage = () => {
   const { sport } = useParams<{ sport: string }>();
   const data = sportData[sport || ""];
+  const [tennisSessions, setTennisSessions] = useState<TennisSession[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [sessionsError, setSessionsError] = useState<string | null>(null);
 
   if (!data) {
     return (
@@ -51,6 +155,58 @@ const SportDetailPage = () => {
   }
 
   const isTennis = sport === "tennis";
+
+  useEffect(() => {
+    if (!isTennis) {
+      return;
+    }
+
+    const abortController = new AbortController();
+
+    const loadTennisSessions = async () => {
+      try {
+        setSessionsLoading(true);
+        setSessionsError(null);
+
+        if (!import.meta.env.DEV) {
+          try {
+            const apiResponse = await fetch("/api/usta-sessions", {
+              signal: abortController.signal,
+            });
+
+            if (!apiResponse.ok) {
+              throw new Error("Unable to load tennis sessions.");
+            }
+
+            const apiSessions = await apiResponse.json();
+            setTennisSessions(apiSessions);
+            return;
+          } catch {
+            const fallbackSessions = await fetchUstaSessionsDirect(abortController.signal);
+            setTennisSessions(fallbackSessions);
+            return;
+          }
+        }
+
+        const directSessions = await fetchUstaSessionsDirect(abortController.signal);
+        setTennisSessions(directSessions);
+      } catch (error) {
+        if (!abortController.signal.aborted) {
+          setSessionsError("Live USTA sessions are unavailable right now.");
+        }
+      } finally {
+        if (!abortController.signal.aborted) {
+          setSessionsLoading(false);
+        }
+      }
+    };
+
+    void loadTennisSessions();
+
+    return () => {
+      abortController.abort();
+    };
+  }, [isTennis]);
 
   return (
     <div className="overflow-hidden">
@@ -77,6 +233,8 @@ const SportDetailPage = () => {
         </div>
       </section>
 
+      {isTennis && (
+        <>
       {/* How Lessons Work */}
       <section className="py-16 md:py-24 bg-card scratchy-overlay">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,38 +254,111 @@ const SportDetailPage = () => {
         </div>
       </section>
 
-      {/* Schedule */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-8">
-              <span className="brush-underline">Schedule</span>
-            </h2>
-            <div className="space-y-3">
-              {data.schedule.map((s, i) => (
-                <div key={i} className="p-5 bg-card border border-border text-foreground font-body text-lg">
-                  {s}
-                </div>
-              ))}
+          {/* Live Tennis Sessions */}
+          <section className="py-16 md:py-24">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+              <ScrollReveal>
+                <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-8">
+                  Live <span className="brush-underline">USTA Sessions</span>
+                </h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-10">
+                  Discover our range of tennis programs designed for all skill levels, from beginner to advanced. Join
+                  us for group sessions, fun community events, and the joy of learning tennis in a supportive
+                  environment. Private lessons are also available, please contact us directly to arrange.
+                </p>
+
+                {sessionsLoading ? (
+                  <div className="p-6 bg-card border border-border text-foreground font-body text-lg">
+                    Loading live USTA sessions...
+                  </div>
+                ) : sessionsError ? (
+                  <div className="space-y-4">
+                    <div className="p-6 bg-card border border-border text-foreground font-body text-lg">
+                      {sessionsError}
+                    </div>
+                    <a
+                      href="https://playtennis.usta.com/togethertennis/Coaching"
+                      className="inline-block px-8 py-4 bg-primary text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200"
+                    >
+                      View USTA Page
+                    </a>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {tennisSessions.map((session) => (
+                      <a
+                        key={session.id}
+                        href={session.link}
+                        className="block border-2 border-border bg-card p-6 transition-colors duration-200 hover:border-accent"
+                      >
+                        <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                          <div>
+                            <h3 className="font-heading text-3xl md:text-4xl font-black uppercase text-foreground mb-2">
+                              {session.name}
+                            </h3>
+                            <p className="text-foreground text-lg md:text-xl">{session.nextSessionLabel}</p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-foreground">
+                            <div>
+                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Location</p>
+                              <p className="text-lg">{session.locationName}</p>
+                            </div>
+                            <div>
+                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Coach</p>
+                              <p className="text-lg">{session.coachName}</p>
+                            </div>
+                            <div>
+                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Level</p>
+                              <p className="text-lg">{session.levelLabel}</p>
+                            </div>
+                            <div>
+                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Next Session</p>
+                              <p className="text-lg">{session.nextSessionLabel}</p>
+                            </div>
+                            <div>
+                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Date</p>
+                              <p className="text-lg">{session.dateLabel}</p>
+                            </div>
+                            <div>
+                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Time</p>
+                              <p className="text-lg">{session.timeLabel}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </ScrollReveal>
             </div>
-          </ScrollReveal>
-        </div>
-      </section>
+          </section>
+
+        </>
+      )}
 
       {/* Registration */}
       <section className="py-16 md:py-24 bg-card scratchy-overlay">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollReveal direction="scale">
             <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-4">
-              Ready to <span className="text-accent">Register?</span>
+              Ready to <span className="text-accent">{isTennis ? "Register?" : "Enter the Waitlist?"}</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto">
-              Sign up through USTA or contact us directly to join the program.
+              {isTennis
+                ? "Sign up through USTA or contact us directly to join the program."
+                : "Join the waitlist and we will reach out as soon as space opens up for this sport."}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <a href="#" className="inline-block px-8 py-4 bg-primary text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200">
-                USTA Registration →
-              </a>
+              {isTennis ? (
+                <a href="#" className="inline-block px-8 py-4 bg-primary text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200">
+                  USTA Registration →
+                </a>
+              ) : (
+                <Link to="/contact" className="inline-block px-8 py-4 bg-primary text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200">
+                  Join Waitlist →
+                </Link>
+              )}
               <Link to="/contact" className="inline-block px-8 py-4 bg-accent text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200">
                 Contact Us
               </Link>
@@ -147,13 +378,18 @@ const SportDetailPage = () => {
                 </div>
               </ScrollReveal>
               <ScrollReveal direction="right">
-                <p className="font-body font-bold uppercase tracking-[0.2em] text-accent text-sm mb-4">Flagship Initiative</p>
+                <p className="font-body font-bold uppercase tracking-[0.2em] text-accent text-sm mb-4">Partner Service + Initiative</p>
                 <h2 className="font-heading text-5xl md:text-6xl font-black uppercase leading-[0.9] mb-6">
                   Second Serve
                 </h2>
                 <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-                  Second Serve is our signature program providing free tennis equipment, coaching, and mentorship
-                  to underserved youth. We believe every kid deserves a second chance — on and off the court.
+                  Second Serve is a service from our partner Second Serve. Alongside that partnership, Together Tennis
+                  is building its own Second Serve effort focused on collecting quality used tennis equipment that
+                  people would otherwise throw away and donating it back into the community.
+                </p>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                  The goal is simple: keep rackets, bags, balls, and gear in circulation so more kids can play with
+                  what they need instead of being priced out of the sport.
                 </p>
                 <Link to="/get-involved" className="inline-block px-8 py-4 bg-accent text-white font-heading font-bold uppercase tracking-wider hover:scale-105 hover:rotate-1 transition-all duration-200">
                   Support Second Serve

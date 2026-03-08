@@ -1,0 +1,167 @@
+import type { PortableEditableContentState } from "@/lib/editable-content-format";
+
+const editableContentSeed: PortableEditableContentState = {
+  "experiences": [
+    {
+      "id": "quote-1",
+      "type": "quote",
+      "sport": "Tennis",
+      "quote": "My 4-year-old had her first tennis lesson with Coach Harry, and it could not have gone better. He met her where she was, encouraging, kind, and full of energy. Together Tennis makes tennis feel welcoming for families at every level.",
+      "name": "Leigh H.",
+      "age": "Parent"
+    },
+    {
+      "id": "quote-2",
+      "type": "quote",
+      "sport": "Tennis",
+      "quote": "Zoe had a great experience practicing tennis with Harry. He did an excellent job teaching her techniques to improve her game. I would highly recommend Harry to any students who are looking to become better tennis players.",
+      "name": "Michael B.",
+      "age": "Parent"
+    },
+    {
+      "id": "quote-3",
+      "type": "quote",
+      "sport": "Tennis",
+      "quote": "Theo has always been quite shy, especially in new environments where he would normally stay close to me. Seeing him open up with you has been truly special, thank you for helping him come out of his shell!",
+      "name": "Rachel L.",
+      "age": "Parent"
+    },
+    {
+      "id": "parent-1",
+      "type": "parent",
+      "sport": "Basketball",
+      "quote": "We have seen so much confidence grow through the program. The coaches make the environment feel positive, focused, and welcoming for families.",
+      "name": "Parent Name"
+    },
+    {
+      "id": "photo-1",
+      "type": "photo",
+      "image": "media:img-0903",
+      "caption": "Practice moments that turn into confidence."
+    },
+    {
+      "id": "photo-2",
+      "type": "photo",
+      "image": "media:img-3782",
+      "caption": "Community, connection, and a lot of joy on court."
+    },
+    {
+      "id": "photo-3",
+      "type": "photo",
+      "image": "media:mentorship",
+      "caption": "Mentorship is part of the experience too."
+    },
+    {
+      "id": "video-1",
+      "type": "video",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "videoTitle": "Sample Highlight Video"
+    },
+    {
+      "id": "photo-4",
+      "type": "photo",
+      "image": "media:hero-sports",
+      "caption": "The bigger picture is always community."
+    }
+  ],
+  "partners": [
+    {
+      "id": "partner-1",
+      "name": "Second Serve",
+      "logo": "media:partner-1",
+      "href": "https://www.secondserve.org/"
+    },
+    {
+      "id": "partner-2",
+      "name": "Next Steps",
+      "logo": "media:partner-2",
+      "href": "https://www.nextstepsjournal.org"
+    },
+    {
+      "id": "partner-3",
+      "name": "STEMise",
+      "logo": "media:partner-3",
+      "href": "https://www.stemise.org"
+    },
+    {
+      "id": "partner-4",
+      "name": "Ball Back Project",
+      "logo": "media:partner-4",
+      "href": "https://www.instagram.com/ballbackproject/"
+    }
+  ],
+  "teamSections": [
+    {
+      "id": "founder",
+      "title": "Founder",
+      "color": "#4f74d6",
+      "people": [
+        {
+          "id": "founder-1",
+          "name": "Founder Name",
+          "role": "Founder & Executive Director",
+          "image": "media:hero-sports",
+          "alt": "Founder placeholder"
+        }
+      ]
+    },
+    {
+      "id": "staff",
+      "title": "Staff",
+      "color": "#87cb4a",
+      "people": [
+        {
+          "id": "staff-1",
+          "name": "Staff Name",
+          "role": "Program Manager",
+          "image": "media:mentorship",
+          "alt": "Staff placeholder"
+        },
+        {
+          "id": "staff-2",
+          "name": "Staff Name",
+          "role": "Operations Coordinator",
+          "image": "media:hero-sports",
+          "alt": "Staff placeholder"
+        },
+        {
+          "id": "staff-3",
+          "name": "Staff Name",
+          "role": "Community Support",
+          "image": "media:img-3782",
+          "alt": "Staff placeholder"
+        }
+      ]
+    },
+    {
+      "id": "coaches",
+      "title": "Coaches",
+      "color": "#f6a15c",
+      "people": [
+        {
+          "id": "coach-1",
+          "name": "Coach Name",
+          "role": "Head Coach",
+          "image": "media:img-0903",
+          "alt": "Coach placeholder"
+        },
+        {
+          "id": "coach-2",
+          "name": "Coach Name",
+          "role": "Assistant Coach",
+          "image": "media:mentorship",
+          "alt": "Coach placeholder"
+        },
+        {
+          "id": "coach-3",
+          "name": "Coach Name",
+          "role": "Youth Development Coach",
+          "image": "media:hero-sports",
+          "alt": "Coach placeholder"
+        }
+      ]
+    }
+  ]
+};
+
+export default editableContentSeed;

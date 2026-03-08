@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
+import PageHero from "@/components/PageHero";
 import { blogPosts } from "@/data/blogPosts";
 
 const formatDate = (value: string) =>
@@ -14,19 +15,16 @@ const BlogPage = () => {
 
   return (
     <div className="overflow-hidden">
-      <section className="relative py-24 md:py-32 bg-card scratchy-overlay">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Stories</p>
-            <h1 className="font-heading text-6xl md:text-8xl font-black uppercase leading-[0.85] mb-4">
-              The <span className="text-stroke">Blog</span>
-            </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl">
-              Synced from Together Sports on Substack, rendered here as native website posts.
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Stories"
+        title={
+          <>
+            <span className="whitespace-nowrap">The </span>
+            <span className="whitespace-nowrap text-[#4f74d6]">Blog</span>
+          </>
+        }
+        description="Synced from Together Sports on Substack, rendered here as native website posts."
+      />
 
       {featured ? (
         <>

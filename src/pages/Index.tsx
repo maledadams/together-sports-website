@@ -358,10 +358,10 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Where We Are</p>
-            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4">
-              Our <span className="text-stroke">Location</span>
+            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 whitespace-nowrap">
+              Our <span className="brush-underline">Location</span>
             </h2>
-            <p className="text-muted-foreground text-lg mb-12 max-w-md">
+            <p className="text-muted-foreground font-bold text-lg mb-12">
               Based in New York City, serving communities across the five boroughs.
             </p>
           </ScrollReveal>

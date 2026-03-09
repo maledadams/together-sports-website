@@ -104,15 +104,12 @@ const Index = () => {
               transition={{ duration: 0.7, ease: "easeOut" }}
               className="max-w-2xl"
             >
-              <p className="font-body font-bold uppercase tracking-[0.3em] text-primary text-sm md:text-base mb-4">
-                Together Sports
-              </p>
               <h1 className="font-heading text-6xl sm:text-7xl md:text-8xl lg:text-[6.4rem] xl:text-[7rem] font-black uppercase leading-[0.94] mb-8 text-foreground">
                 <span className="block whitespace-nowrap">Play Loud.</span>
                 <span className="block whitespace-nowrap text-[#4f74d6]">Build Strong.</span>
               </h1>
               <p className="text-foreground/70 text-lg md:text-xl max-w-xl mb-8 font-body">
-                Empowering youth through sports, mentorship, and community one game at a time.
+                Together Sports is empowering youth through sports, mentorship, and community — one game at a time.
               </p>
               <div className="flex flex-wrap gap-4">
                 <a
@@ -314,16 +311,13 @@ const Index = () => {
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="py-20 md:py-32 bg-card scratchy-overlay relative">
+      <section className="py-20 md:py-32 bg-[#87cb4a] scratchy-overlay relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <p className="font-body font-bold uppercase tracking-[0.3em] text-sport-tennis text-sm mb-4">
-              Real Stories
-            </p>
-            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-foreground">
-              Together <span className="brush-underline">Tennis</span>
+            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-white text-center">
+              Testimonials
             </h2>
-            <p className="text-muted-foreground text-lg mb-16 max-w-lg">
+            <p className="text-white font-bold text-lg mb-16 max-w-lg mx-auto text-center">
               The little stories that show the big picture: connection, encouragement, and growth.
             </p>
           </ScrollReveal>
@@ -332,13 +326,16 @@ const Index = () => {
             {featuredTestimonials.map((testimonial, i) => (
               <ScrollReveal key={testimonial.id} delay={i * 0.15}>
                 <div
-                  className={`relative bg-background p-8 md:p-10 transition-colors duration-300 ${
+                  className={`relative bg-white p-8 md:p-10 transition-colors duration-300 ${
                     i === 1 ? "md:-translate-y-6 scrapbook-rotate-2" : i === 2 ? "scrapbook-rotate-3" : "scrapbook-rotate-1"
                   }`}
                 >
                   <span
-                    className="absolute -top-5 left-6 font-heading text-8xl text-sport-tennis leading-none select-none pointer-events-none"
-                    style={{ WebkitTextStroke: "2px white" }}
+                    className="absolute -top-5 left-6 font-heading text-8xl leading-none select-none pointer-events-none"
+                    style={{
+                      color: i === 0 ? "#ab9bfa" : i === 1 ? "#f6a15c" : "#84a6ff",
+                      WebkitTextStroke: "2px white",
+                    }}
                   >
                     &ldquo;
                   </span>
@@ -346,7 +343,7 @@ const Index = () => {
                     &ldquo;{testimonial.quote || ""}&rdquo;
                   </p>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-1 bg-sport-tennis" />
+                    <div className={`w-10 h-1 ${i === 0 ? 'bg-[#ab9bfa]' : i === 1 ? 'bg-[#f6a15c]' : 'bg-[#84a6ff]'}`} />
                     <span className="font-heading font-bold uppercase text-sm tracking-wider text-foreground">
                       {testimonial.name}
                     </span>
@@ -356,20 +353,6 @@ const Index = () => {
             ))}
           </div>
 
-          <ScrollReveal>
-            <div className="mt-16 flex flex-wrap justify-center gap-x-8 gap-y-3 text-muted-foreground text-base md:text-lg">
-              {[
-                "The first time a ball clears the net",
-                "The confidence that builds with each swing",
-                "The laughter after a missed shot",
-              ].map((moment) => (
-                <span key={moment} className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-sport-tennis rounded-full inline-block shrink-0" />
-                  {moment}
-                </span>
-              ))}
-            </div>
-          </ScrollReveal>
         </div>
       </section>
 
@@ -377,11 +360,10 @@ const Index = () => {
       <section className="py-20 md:py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Where We Are</p>
-            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4">
-              Our <span className="text-stroke">Location</span>
+            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 whitespace-nowrap">
+              Our <span className="brush-underline">Location</span>
             </h2>
-            <p className="text-muted-foreground text-lg mb-12 max-w-md">
+            <p className="text-muted-foreground text-lg mb-12">
               Based in New York City, serving communities across the five boroughs.
             </p>
           </ScrollReveal>
@@ -430,9 +412,9 @@ const Index = () => {
             <h2 className="font-heading text-5xl md:text-7xl font-black uppercase text-white leading-[0.85] mb-6">
               Change the Game.
               <br />
-              <span className="text-white/60">Donate Today.</span>
+              <span className="text-white">Donate Today.</span>
             </h2>
-            <p className="text-white/70 text-lg mb-8 max-w-lg mx-auto font-body">
+            <p className="text-white font-bold text-lg mb-8 max-w-lg mx-auto font-body">
               Your contribution puts a racket, a ball, or a dream in a kid&apos;s hands. Every dollar counts.
             </p>
             <Link

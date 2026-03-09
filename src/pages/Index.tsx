@@ -311,16 +311,16 @@ const Index = () => {
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="py-20 md:py-32 bg-card scratchy-overlay relative">
+      <section className="py-20 md:py-32 bg-[hsl(130,25%,93%)] scratchy-overlay relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <p className="font-body font-bold uppercase tracking-[0.3em] text-sport-tennis text-sm mb-4">
+            <p className="font-body font-bold uppercase tracking-[0.3em] text-sport-tennis text-sm mb-4 text-center">
               Real Stories
             </p>
-            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-foreground">
-              Together <span className="brush-underline">Tennis</span>
+            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-foreground text-center">
+              Together Tennis
             </h2>
-            <p className="text-muted-foreground text-lg mb-16 max-w-lg">
+            <p className="text-muted-foreground font-bold text-lg mb-16 max-w-lg mx-auto text-center">
               The little stories that show the big picture: connection, encouragement, and growth.
             </p>
           </ScrollReveal>

@@ -332,11 +332,14 @@ const Index = () => {
             {featuredTestimonials.map((testimonial, i) => (
               <ScrollReveal key={testimonial.id} delay={i * 0.15}>
                 <div
-                  className={`relative bg-background p-8 md:p-10 border-2 border-border hover:border-sport-tennis transition-colors duration-300 ${
+                  className={`relative bg-background p-8 md:p-10 transition-colors duration-300 ${
                     i === 1 ? "md:-translate-y-6 scrapbook-rotate-2" : i === 2 ? "scrapbook-rotate-3" : "scrapbook-rotate-1"
                   }`}
                 >
-                  <span className="absolute -top-5 left-6 font-heading text-8xl text-sport-tennis/30 leading-none select-none pointer-events-none">
+                  <span
+                    className="absolute -top-5 left-6 font-heading text-8xl text-sport-tennis leading-none select-none pointer-events-none"
+                    style={{ WebkitTextStroke: "2px white" }}
+                  >
                     &ldquo;
                   </span>
                   <p className="text-foreground text-base md:text-lg leading-relaxed mb-6 relative z-10 italic">

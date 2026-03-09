@@ -9,6 +9,16 @@ export type TeamPerson = {
   role: string;
   image: string;
   alt: string;
+  description?: string;
+  socialLinks?: TeamSocialLink[];
+};
+
+export type TeamSocialPlatform = "instagram" | "linkedin" | "tiktok";
+
+export type TeamSocialLink = {
+  id: string;
+  platform: TeamSocialPlatform;
+  href: string;
 };
 
 export type TeamSection = {
@@ -30,6 +40,7 @@ const teamSections: TeamSection[] = [
         role: "Founder & Executive Director",
         image: heroImage,
         alt: "Founder placeholder",
+        description: "Builds the long-term vision, partnerships, and day-to-day leadership that keep Together Sports moving.",
       },
     ],
   },
@@ -44,6 +55,7 @@ const teamSections: TeamSection[] = [
         role: "Program Manager",
         image: mentorshipImg,
         alt: "Staff placeholder",
+        description: "Helps coordinate programming, logistics, and communication so every session runs smoothly for families.",
       },
       {
         id: "staff-2",
@@ -51,6 +63,7 @@ const teamSections: TeamSection[] = [
         role: "Operations Coordinator",
         image: heroImage,
         alt: "Staff placeholder",
+        description: "Supports registration, scheduling, and community outreach across sports and events.",
       },
       {
         id: "staff-3",
@@ -58,6 +71,7 @@ const teamSections: TeamSection[] = [
         role: "Community Support",
         image: image3782,
         alt: "Staff placeholder",
+        description: "Keeps athletes and families connected to resources, updates, and volunteer support.",
       },
     ],
   },
@@ -72,6 +86,7 @@ const teamSections: TeamSection[] = [
         role: "Head Coach",
         image: image0903,
         alt: "Coach placeholder",
+        description: "Leads sessions with a focus on fundamentals, confidence, and consistent growth.",
       },
       {
         id: "coach-2",
@@ -79,6 +94,7 @@ const teamSections: TeamSection[] = [
         role: "Assistant Coach",
         image: mentorshipImg,
         alt: "Coach placeholder",
+        description: "Supports drills, encouragement, and individual attention during practice and events.",
       },
       {
         id: "coach-3",
@@ -86,6 +102,7 @@ const teamSections: TeamSection[] = [
         role: "Youth Development Coach",
         image: heroImage,
         alt: "Coach placeholder",
+        description: "Connects mentorship and athletics to help players grow on and off the court.",
       },
     ],
   },

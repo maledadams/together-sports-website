@@ -101,7 +101,8 @@ const editableContentSeed: PortableEditableContentState = {
           "name": "Founder Name",
           "role": "Founder & Executive Director",
           "image": "media:hero-sports",
-          "alt": "Founder placeholder"
+          "alt": "Founder placeholder",
+          "description": "Builds the long-term vision, partnerships, and day-to-day leadership that keep Together Sports moving."
         }
       ]
     },
@@ -115,21 +116,24 @@ const editableContentSeed: PortableEditableContentState = {
           "name": "Staff Name",
           "role": "Program Manager",
           "image": "media:mentorship",
-          "alt": "Staff placeholder"
+          "alt": "Staff placeholder",
+          "description": "Helps coordinate programming, logistics, and communication so every session runs smoothly for families."
         },
         {
           "id": "staff-2",
           "name": "Staff Name",
           "role": "Operations Coordinator",
           "image": "media:hero-sports",
-          "alt": "Staff placeholder"
+          "alt": "Staff placeholder",
+          "description": "Supports registration, scheduling, and community outreach across sports and events."
         },
         {
           "id": "staff-3",
           "name": "Staff Name",
           "role": "Community Support",
           "image": "media:img-3782",
-          "alt": "Staff placeholder"
+          "alt": "Staff placeholder",
+          "description": "Keeps athletes and families connected to resources, updates, and volunteer support."
         }
       ]
     },
@@ -143,21 +147,24 @@ const editableContentSeed: PortableEditableContentState = {
           "name": "Coach Name",
           "role": "Head Coach",
           "image": "media:img-0903",
-          "alt": "Coach placeholder"
+          "alt": "Coach placeholder",
+          "description": "Leads sessions with a focus on fundamentals, confidence, and consistent growth."
         },
         {
           "id": "coach-2",
           "name": "Coach Name",
           "role": "Assistant Coach",
           "image": "media:mentorship",
-          "alt": "Coach placeholder"
+          "alt": "Coach placeholder",
+          "description": "Supports drills, encouragement, and individual attention during practice and events."
         },
         {
           "id": "coach-3",
           "name": "Coach Name",
           "role": "Youth Development Coach",
           "image": "media:hero-sports",
-          "alt": "Coach placeholder"
+          "alt": "Coach placeholder",
+          "description": "Connects mentorship and athletics to help players grow on and off the court."
         }
       ]
     }

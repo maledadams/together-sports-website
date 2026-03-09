@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mediaLibrary } from "@/data/mediaLibrary";
 import type { Experience, ExperienceType } from "@/data/experiences";
 import type { Partner } from "@/data/partners";
-import type { TeamPerson, TeamSection } from "@/data/team";
+import type { TeamPerson, TeamSection, TeamSocialPlatform } from "@/data/team";
 import { useEditableContent } from "@/lib/editable-content";
 
 const inputClass =
@@ -17,6 +17,23 @@ const labelClass = "font-body font-bold uppercase tracking-[0.16em] text-xs text
 
 const createId = (prefix: string) =>
   `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+const socialPlatformOptions: { value: TeamSocialPlatform; label: string }[] = [
+  { value: "instagram", label: "Instagram" },
+  { value: "linkedin", label: "LinkedIn" },
+  { value: "tiktok", label: "TikTok" },
+];
+
+const limitWords = (value: string, maxWords: number) => {
+  const words = value.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= maxWords) {
+    return value;
+  }
+
+  return words.slice(0, maxWords).join(" ");
+};
+
+const countWords = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
 
 const EditorCard = ({ children }: { children: ReactNode }) => (
   <div className="border border-border bg-card p-6 md:p-8 space-y-5">{children}</div>
@@ -777,6 +794,23 @@ const AdminPage = () => {
                               placeholder="Role"
                             />
                           </div>
+                          <div className="space-y-2 md:col-span-2">
+                            <p className={labelClass}>Description</p>
+                            <textarea
+                              className={textareaClass}
+                              value={person.description || ""}
+                              onChange={(event) =>
+                                updatePerson(section.id, person.id, {
+                                  ...person,
+                                  description: limitWords(event.target.value, 40),
+                                })
+                              }
+                              placeholder="Optional short description"
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              {countWords(person.description || "")}/40 words
+                            </p>
+                          </div>
                           <div className="md:col-span-2">
                             <ImageField
                               label="Card Image"
@@ -784,6 +818,77 @@ const AdminPage = () => {
                               onChange={(value) => updatePerson(section.id, person.id, { ...person, image: value })}
                               onUpload={uploadImage}
                             />
+                          </div>
+                          <div className="md:col-span-2 space-y-3">
+                            <div className="flex items-center justify-between gap-3">
+                              <p className={labelClass}>Social Links</p>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  updatePerson(section.id, person.id, {
+                                    ...person,
+                                    socialLinks: [
+                                      ...(person.socialLinks || []).slice(0, 3),
+                                      { id: createId("social"), platform: "instagram", href: "" },
+                                    ].slice(0, 3),
+                                  })
+                                }
+                                disabled={(person.socialLinks?.length || 0) >= 3}
+                                className="px-4 py-2 border border-border bg-card text-foreground font-heading font-bold uppercase text-xs tracking-wider disabled:opacity-60"
+                              >
+                                + Add Social
+                              </button>
+                            </div>
+
+                            {(person.socialLinks || []).slice(0, 3).map((socialLink) => (
+                              <div key={socialLink.id} className="grid grid-cols-1 md:grid-cols-[160px_minmax(0,1fr)_auto] gap-3">
+                                <select
+                                  className={inputClass}
+                                  value={socialLink.platform}
+                                  onChange={(event) =>
+                                    updatePerson(section.id, person.id, {
+                                      ...person,
+                                      socialLinks: (person.socialLinks || []).map((item) =>
+                                        item.id === socialLink.id
+                                          ? { ...item, platform: event.target.value as TeamSocialPlatform }
+                                          : item,
+                                      ),
+                                    })
+                                  }
+                                >
+                                  {socialPlatformOptions.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                      {option.label}
+                                    </option>
+                                  ))}
+                                </select>
+                                <input
+                                  className={inputClass}
+                                  value={socialLink.href}
+                                  onChange={(event) =>
+                                    updatePerson(section.id, person.id, {
+                                      ...person,
+                                      socialLinks: (person.socialLinks || []).map((item) =>
+                                        item.id === socialLink.id ? { ...item, href: event.target.value } : item,
+                                      ),
+                                    })
+                                  }
+                                  placeholder="https://..."
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    updatePerson(section.id, person.id, {
+                                      ...person,
+                                      socialLinks: (person.socialLinks || []).filter((item) => item.id !== socialLink.id),
+                                    })
+                                  }
+                                  className="px-4 py-2 border border-border bg-card text-foreground font-heading font-bold uppercase text-xs tracking-wider"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -802,6 +907,8 @@ const AdminPage = () => {
                               role: "New Role",
                               image: "",
                               alt: "Team member",
+                              description: "",
+                              socialLinks: [],
                             },
                           ],
                         })

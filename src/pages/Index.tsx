@@ -354,7 +354,6 @@ const Index = () => {
       <section className="py-20 md:py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Where We Are</p>
             <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 whitespace-nowrap">
               Our <span className="brush-underline">Location</span>
             </h2>

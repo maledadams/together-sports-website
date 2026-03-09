@@ -407,9 +407,9 @@ const Index = () => {
             <h2 className="font-heading text-5xl md:text-7xl font-black uppercase text-white leading-[0.85] mb-6">
               Change the Game.
               <br />
-              <span className="text-white/60">Donate Today.</span>
+              <span className="text-white">Donate Today.</span>
             </h2>
-            <p className="text-white/70 text-lg mb-8 max-w-lg mx-auto font-body">
+            <p className="text-white font-bold text-lg mb-8 max-w-lg mx-auto font-body">
               Your contribution puts a racket, a ball, or a dream in a kid&apos;s hands. Every dollar counts.
             </p>
             <Link

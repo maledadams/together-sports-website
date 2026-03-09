@@ -1,5 +1,5 @@
+import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
-import PageHero from "@/components/PageHero";
 import { useEditableContent } from "@/lib/editable-content";
 import type { Experience } from "@/data/experiences";
 

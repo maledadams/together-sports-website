@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
-import PageHero from "@/components/PageHero";
 import { blogPosts } from "@/data/blogPosts";
 
 const formatDate = (value: string) =>

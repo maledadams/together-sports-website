@@ -45,10 +45,10 @@ const Footer = () => {
           <div>
             <h4 className="font-heading text-lg font-bold uppercase mb-4 text-accent">Navigate</h4>
             <ul className="space-y-2">
-              {["Team", "Blog"].map((item) => (
+              {["Team", "Experiences", "Blog"].map((item) => (
                 <li key={item}>
                   <Link
-                    to={item === "Team" ? "/team" : `/${item.toLowerCase().replace(/ /g, "-")}`}
+                    to={`/${item.toLowerCase().replace(/ /g, "-")}`}
                     className="text-soft-blue hover:text-white transition-colors text-sm font-medium"
                   >
                     {item}

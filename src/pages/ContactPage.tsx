@@ -30,12 +30,12 @@ const ContactPage = () => {
         </div>
       </section>
 
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-18">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-10 lg:items-stretch">
             <ScrollReveal direction="left">
               <div className="h-full flex flex-col">
-                <h2 className="font-heading text-3xl font-black uppercase mb-8">
+                <h2 className="font-heading text-3xl font-black uppercase mb-8 md:mb-6">
                   Send Us a <span className="text-[#f6a15c]">Message</span>
                 </h2>
                 <form className="space-y-4 flex-1" onSubmit={(e) => e.preventDefault()}>
@@ -80,7 +80,7 @@ const ContactPage = () => {
             </ScrollReveal>
 
             <ScrollReveal direction="right">
-              <div className="h-full min-h-[260px] flex items-center justify-center p-6 sm:min-h-[320px] md:min-h-[430px] md:p-12">
+              <div className="h-full min-h-[260px] flex items-center justify-center p-6 sm:min-h-[320px] md:min-h-[390px] md:p-10">
                 <img src={contactLogo} alt="Together Sports logo" className="w-full max-w-md h-auto object-contain" />
               </div>
             </ScrollReveal>

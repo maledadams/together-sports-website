@@ -10,8 +10,8 @@ const PartnersPage = () => {
   return (
     <div className="overflow-hidden">
       {/* INFINITE CAROUSEL */}
-      <section className="pb-32 md:pb-40 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-28 mb-24 md:mb-28">
+      <section className="pb-32 md:pb-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-28 mb-24 md:mb-20">
           <ScrollReveal>
             <div className="text-center">
               <h2 className="font-heading text-6xl md:text-[5.25rem] font-black uppercase text-foreground">
@@ -39,7 +39,7 @@ const PartnersPage = () => {
                     target={partner.href ? "_blank" : undefined}
                     rel={partner.href ? "noreferrer" : undefined}
                     aria-label={partner.href ? partner.name : undefined}
-                    className="flex-shrink-0 w-40 h-28 md:w-52 md:h-36 flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"
+                    className="flex-shrink-0 w-40 h-28 md:w-44 md:h-[7.5rem] flex items-center justify-center grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"
                   >
                     <img
                       src={partner.logo}
@@ -56,7 +56,7 @@ const PartnersPage = () => {
       </section>
 
       {/* Why Partner */}
-      <section className="py-20 md:py-28 bg-accent scratchy-overlay">
+      <section className="py-20 md:py-20 bg-accent scratchy-overlay">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12 text-white text-center">
@@ -83,7 +83,7 @@ const PartnersPage = () => {
               },
             ].map((item, i) => (
               <ScrollReveal key={item.title} delay={i * 0.15} direction="up">
-                <div className="p-8 md:p-10 bg-background border border-border hover:border-accent transition-colors duration-300">
+                <div className="p-8 md:p-8 bg-background border border-border hover:border-accent transition-colors duration-300">
                   <h3 className="font-heading text-3xl font-black uppercase mb-3" style={{ color: item.titleColor }}>{item.title}</h3>
                   <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
@@ -94,9 +94,9 @@ const PartnersPage = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 md:py-28">
+      <section className="py-20 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-10 items-center">
             <ScrollReveal direction="left">
               <h2 className="font-heading text-4xl md:text-6xl font-black uppercase mb-6">
                 Become A{" "}
@@ -117,7 +117,7 @@ const PartnersPage = () => {
               </Link>
             </ScrollReveal>
             <ScrollReveal direction="right">
-              <div className="p-8 md:p-10 bg-white border border-border scrapbook-rotate-2">
+              <div className="p-8 md:p-9 bg-white border border-border scrapbook-rotate-2">
                 <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">What You Get</p>
                 {[
                   "Positive community impact and youth development",

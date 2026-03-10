@@ -12,9 +12,8 @@ const AboutPage = () => {
         <div className="absolute left-4 top-8 h-12 w-12 rounded-full bg-white/10 sm:left-10 sm:top-10 sm:h-20 sm:w-20" />
         <div className="absolute left-[18%] top-24 hidden h-12 w-12 rotate-45 bg-white/10 sm:block" />
         <div className="absolute right-4 top-10 h-10 w-10 bg-white/10 scrapbook-rotate-2 sm:right-12 sm:top-12 sm:h-16 sm:w-16" />
-        <div className="absolute right-[17%] top-28 hidden h-0 w-0 border-l-[24px] border-r-[24px] border-b-[40px] border-l-transparent border-r-transparent border-b-white/10 md:block" />
         <div className="absolute left-10 bottom-8 h-8 w-8 bg-white/10 scrapbook-rotate-3 sm:left-16 sm:h-10 sm:w-10" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-24">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-16">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
@@ -36,12 +35,10 @@ const AboutPage = () => {
         <div className="absolute left-4 top-14 h-14 w-14 rounded-full bg-white/10 sm:h-20 sm:w-20" />
         <div className="absolute left-10 top-1/3 hidden h-12 w-12 rotate-45 bg-white/10 sm:block" />
         <div className="absolute left-6 bottom-28 hidden h-16 w-16 bg-white/10 scrapbook-rotate-2 sm:block" />
-        <div className="absolute left-[14%] bottom-10 hidden h-0 w-0 border-l-[20px] border-r-[20px] border-b-[34px] border-l-transparent border-r-transparent border-b-white/10 md:block" />
         <div className="absolute left-[22%] top-8 h-8 w-8 rounded-full bg-white/10 sm:h-10 sm:w-10" />
         <div className="absolute right-4 top-16 h-12 w-12 rotate-45 bg-white/10 sm:h-16 sm:w-16" />
         <div className="absolute right-10 top-[30%] hidden h-14 w-14 bg-white/10 scrapbook-rotate-2 sm:block" />
         <div className="absolute right-6 bottom-24 hidden h-20 w-20 rounded-full bg-white/10 sm:block" />
-        <div className="absolute right-[14%] bottom-12 hidden h-0 w-0 border-l-[22px] border-r-[22px] border-b-[38px] border-l-transparent border-r-transparent border-b-white/10 md:block" />
         <div className="absolute right-[22%] top-10 hidden h-10 w-10 bg-white/10 scrapbook-rotate-3 sm:block" />
         <div className="absolute left-1/2 top-6 h-6 w-6 -translate-x-1/2 rounded-full bg-white/10 sm:h-8 sm:w-8" />
         <div className="absolute left-1/2 bottom-6 hidden h-12 w-12 -translate-x-1/2 rotate-45 bg-white/10 sm:block" />
@@ -63,8 +60,8 @@ const AboutPage = () => {
                   <div
                     className={
                       section.title === "Founder"
-                        ? "max-w-md mx-auto"
-                        : "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8"
+                        ? "max-w-md md:max-w-lg mx-auto"
+                        : "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-7"
                     }
                   >
                     {section.people.map((person, personIndex) => (
@@ -74,12 +71,24 @@ const AboutPage = () => {
                         direction={personIndex % 2 === 0 ? "left" : "right"}
                       >
                         <div className="bg-white border border-border overflow-hidden">
-                          <img src={person.image} alt={person.alt} className="w-full h-[320px] md:h-[360px] object-cover" />
-                          <div className="p-7 md:p-8">
+                          <img
+                            src={person.image}
+                            alt={person.alt}
+                            className={`w-full object-cover ${
+                              section.title === "Founder" ? "h-[320px] md:h-[400px]" : "h-[320px] md:h-[310px]"
+                            }`}
+                          />
+                          <div className={section.title === "Founder" ? "p-7 md:p-9" : "p-7 md:p-7"}>
                             <p className="font-body font-bold uppercase tracking-[0.22em] text-sm mb-3" style={{ color: section.color }}>
                               {person.role}
                             </p>
-                            <h4 className="font-heading text-3xl md:text-4xl font-black uppercase">{person.name}</h4>
+                            <h4
+                              className={`font-heading font-black uppercase ${
+                                section.title === "Founder" ? "text-4xl md:text-5xl" : "text-3xl md:text-4xl"
+                              }`}
+                            >
+                              {person.name}
+                            </h4>
                           </div>
                         </div>
                       </ScrollReveal>

@@ -2,10 +2,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
 import heroImage from "@/assets/hero-sports.jpg";
-import togetherTennis from "@/assets/TogetherTennis.png";
-import togetherBasketball from "@/assets/TogetherBB.png";
-import togetherFootball from "@/assets/TogetherFB.png";
-import togetherGolf from "@/assets/TogetherGolf.png";
 import secondServe from "@/assets/second-serve.jpg";
 import partnerOne from "@/assets/partner-1.png";
 import image0903 from "@/assets/IMG_0903.jpg";
@@ -16,13 +12,6 @@ import basketSpin from "@/assets/BASKETSPIN.svg";
 import footballSpin from "@/assets/FOOTBALLSPIN.svg";
 import golfSpin from "@/assets/GOLFSPIN.svg";
 import { useEditableContent } from "@/lib/editable-content";
-
-const sports = [
-  { name: "Together Tennis", image: togetherTennis, path: "/sports/tennis" },
-  { name: "Together Basketball", image: togetherBasketball, path: "/sports/basketball" },
-  { name: "Together Football", image: togetherFootball, path: "/sports/football" },
-  { name: "Together Golf", image: togetherGolf, path: "/sports/golf" },
-];
 
 const heroSpins = [
   {
@@ -59,6 +48,41 @@ const heroSpins = [
     rotate: 0,
     duration: 0,
     delay: 0,
+    scaleX: -1,
+  },
+];
+
+const sportsCtaSpins = [
+  {
+    image: spinBall,
+    className: "absolute left-20 top-1/2 hidden w-32 -translate-y-1/2 xl:block",
+    rotate: -360,
+    duration: 24,
+    delay: 0,
+    scaleX: 1,
+  },
+  {
+    image: basketSpin,
+    className: "absolute left-[19%] top-1/2 hidden w-32 -translate-y-1/2 xl:block",
+    rotate: 360,
+    duration: 28,
+    delay: 1.5,
+    scaleX: 1,
+  },
+  {
+    image: golfSpin,
+    className: "absolute right-[19%] top-1/2 hidden w-32 -translate-y-1/2 xl:block",
+    rotate: 360,
+    duration: 18,
+    delay: 0.8,
+    scaleX: 1,
+  },
+  {
+    image: footballSpin,
+    className: "absolute right-20 top-1/2 hidden w-32 -translate-y-1/2 xl:block",
+    rotate: 360,
+    duration: 30,
+    delay: 2.2,
     scaleX: -1,
   },
 ];
@@ -238,31 +262,41 @@ const Index = () => {
         </div>
       </section>
 
-      {/* FEATURED SPORTS */}
-      <section id="sports" className="py-20 md:py-32 bg-white relative">
+      {/* SPORTS CTA */}
+      <section id="sports" className="py-20 md:py-24 bg-white relative">
+        {sportsCtaSpins.map((item) => (
+          <motion.div
+            key={`sports-cta-${item.image}`}
+            className={item.className}
+          >
+            <motion.img
+              src={item.image}
+              alt=""
+              aria-hidden="true"
+              className="block w-full h-auto"
+              initial={{ rotate: 0, scaleX: item.scaleX }}
+              animate={{ rotate: item.rotate, scaleX: item.scaleX }}
+              transition={{ rotate: { duration: item.duration, delay: item.delay, ease: "linear", repeat: Infinity } }}
+            />
+          </motion.div>
+        ))}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-center">
-              Our Sports
-            </h2>
-            <p className="text-muted-foreground text-lg md:text-xl mb-12 max-w-2xl mx-auto text-center">
-              Four sports. One mission. Building the next generation of leaders.
-            </p>
+            <div className="mx-auto max-w-4xl text-center">
+              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4">
+                Our Sports
+              </h2>
+              <p className="text-muted-foreground text-lg md:text-xl mb-10 max-w-2xl mx-auto">
+                Explore all four Together Sports programs in one place.
+              </p>
+              <Link
+                to="/sports"
+                className="inline-block px-8 py-4 bg-primary text-white font-heading font-bold text-lg uppercase tracking-wider hover:scale-105 hover:-rotate-1 transition-all duration-200"
+              >
+                View All Sports
+              </Link>
+            </div>
           </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-            {sports.map((sport, i) => (
-              <ScrollReveal key={sport.name} delay={i * 0.1} direction={i % 2 === 0 ? "left" : "right"}>
-                <Link to={sport.path} className="group flex items-center justify-center py-4 md:py-6">
-                  <img
-                    src={sport.image}
-                    alt={sport.name}
-                    className="w-full max-w-[18rem] md:max-w-[22rem] h-auto object-contain transition-transform duration-300 group-hover:scale-[1.04]"
-                  />
-                </Link>
-              </ScrollReveal>
-            ))}
-          </div>
         </div>
       </section>
 

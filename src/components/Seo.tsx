@@ -49,6 +49,14 @@ const getMetaForPath = (pathname: string, blogPosts: ReturnType<typeof useEditab
     };
   }
 
+  if (pathname === "/sports") {
+    return {
+      title: `Our Sports | ${SITE_NAME}`,
+      description:
+        "Explore Together Sports programs across tennis, basketball, football, and golf, each built to grow skills, confidence, and community.",
+    };
+  }
+
   if (pathname === "/experiences") {
     return {
       title: `Our Experiences | ${SITE_NAME}`,

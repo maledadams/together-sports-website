@@ -15,6 +15,7 @@ const navItems = [
       { label: "Golf", path: "/sports/golf", color: "#ab9bfa" },
     ],
   },
+  { label: "Sports", path: "/sports" },
   { label: "Team", path: "/team" },
   { label: "Experiences", path: "/experiences" },
   { label: "Blog", path: "/blog" },
@@ -30,20 +31,20 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary border-b border-primary/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-3 md:h-20 md:gap-6">
-          <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
             <img
               src={headerLogo}
               alt="Together Sports logo"
               className="relative -translate-y-0.5 h-7 w-auto shrink-0 sm:h-8 md:h-10"
             />
-            <span className="flex min-w-0 items-center font-heading text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-[0.08em] sm:tracking-wider leading-none text-[#ffffff]">
+            <span className="flex items-center font-heading text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-[0.08em] sm:tracking-wider leading-none text-[#ffffff]">
               Together Sports
             </span>
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex flex-1 items-center justify-end gap-2 min-w-0">
-            <div className="flex items-center gap-1 min-w-0">
+          <div className="ml-auto hidden lg:flex flex-1 items-center justify-end gap-2">
+            <div className="flex items-center gap-1">
               {navItems.map((item) => (
                 <div
                   key={item.path}

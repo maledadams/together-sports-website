@@ -43,12 +43,12 @@ const BlogPage = () => {
 
       {featured ? (
         <>
-          <section className="py-16 md:py-24">
+          <section className="py-16 md:py-18">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <ScrollReveal>
                 <Link
                   to={`/blog/${featured.slug}`}
-                  className="group relative block overflow-hidden min-h-[340px] sm:min-h-[420px] md:min-h-[520px] border border-border bg-deep-blue"
+                  className="group relative block overflow-hidden min-h-[340px] sm:min-h-[420px] md:min-h-[460px] border border-border bg-deep-blue"
                 >
                   {featured.image ? (
                     <img
@@ -58,7 +58,7 @@ const BlogPage = () => {
                     />
                   ) : null}
                   <div className="absolute inset-0 bg-gradient-to-br from-deep-blue via-primary/80 to-primary/40" />
-                  <div className="relative z-10 flex min-h-[340px] sm:min-h-[420px] md:min-h-[520px] items-end p-6 sm:p-8 md:p-12">
+                  <div className="relative z-10 flex min-h-[340px] sm:min-h-[420px] md:min-h-[460px] items-end p-6 sm:p-8 md:p-10">
                     <div className="max-w-3xl">
                       {featured.tag || featured.featured ? (
                         <span className="inline-block px-3 py-1 bg-accent text-white font-heading font-bold text-xs uppercase tracking-wider mb-4">
@@ -79,7 +79,7 @@ const BlogPage = () => {
             </div>
           </section>
 
-          <section className="pb-20 md:pb-28">
+          <section className="pb-20 md:pb-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               {posts.length ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

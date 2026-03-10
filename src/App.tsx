@@ -9,6 +9,7 @@ import Seo from "./components/Seo";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import AboutPage from "./pages/AboutPage";
+import SportsPage from "./pages/SportsPage";
 import SportDetailPage from "./pages/SportDetailPage";
 
 import BlogPage from "./pages/BlogPage";
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/team" element={<AboutPage />} />
               <Route path="/about" element={<Navigate to="/team" replace />} />
+              <Route path="/sports" element={<SportsPage />} />
               <Route path="/sports/:sport" element={<SportDetailPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />

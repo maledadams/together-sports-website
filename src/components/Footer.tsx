@@ -74,15 +74,15 @@ const socialLinks = [
 const Footer = () => {
   return (
     <footer className="relative overflow-hidden border-t border-white/10 bg-deep-blue">
-      <div className="absolute left-8 top-8 h-16 w-16 rounded-full bg-white/5" />
-      <div className="absolute right-10 top-10 h-12 w-12 rotate-45 bg-white/5" />
-      <div className="absolute bottom-6 right-[12%] h-8 w-8 rounded-full bg-white/5" />
+      <div className="absolute left-4 top-6 h-12 w-12 rounded-full bg-white/5 sm:left-8 sm:top-8 sm:h-16 sm:w-16" />
+      <div className="absolute right-4 top-8 hidden h-10 w-10 rotate-45 bg-white/5 sm:block sm:right-10 sm:top-10 sm:h-12 sm:w-12" />
+      <div className="absolute bottom-6 right-[12%] hidden h-8 w-8 rounded-full bg-white/5 sm:block" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
         <div className="grid grid-cols-1 gap-6 border-b border-white/10 pb-8 lg:grid-cols-[1fr_auto] lg:items-start">
-          <Link to="/" className="inline-flex items-end gap-3">
-            <img src={footerLogo} alt="Together Sports logo" className="relative -translate-y-2 h-16 w-auto shrink-0 md:h-20" />
-            <span className="pb-1 font-heading text-4xl md:text-6xl font-black uppercase tracking-wide text-white leading-none">
+          <Link to="/" className="inline-flex items-end gap-2 sm:gap-3">
+            <img src={footerLogo} alt="Together Sports logo" className="relative -translate-y-1.5 h-12 w-auto shrink-0 sm:-translate-y-2 sm:h-16 md:h-20" />
+            <span className="pb-1 font-heading text-2xl sm:text-4xl md:text-6xl font-black uppercase tracking-wide text-white leading-none">
               Together Sports
             </span>
           </Link>
@@ -120,7 +120,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 py-8 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 py-8 sm:grid-cols-2 md:grid-cols-4">
           <div>
             <h4 className="mb-3 font-heading text-lg md:text-2xl font-black uppercase tracking-wider text-white">Explore</h4>
             <ul className="space-y-2.5">

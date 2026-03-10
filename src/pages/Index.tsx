@@ -37,7 +37,7 @@ const heroSpins = [
   {
     image: golfSpin,
     className:
-      "absolute right-10 top-24 z-0 w-24 sm:right-14 sm:top-28 sm:w-28 md:right-20 md:top-24 md:w-36 lg:right-28 lg:top-32 lg:w-40",
+      "absolute right-10 top-24 z-0 hidden w-24 sm:block sm:right-14 sm:top-28 sm:w-28 md:right-20 md:top-24 md:w-36 lg:right-28 lg:top-32 lg:w-40",
     rotate: 360,
     duration: 18,
     delay: 1.5,
@@ -46,7 +46,7 @@ const heroSpins = [
   {
     image: basketSpin,
     className:
-      "absolute left-[-8rem] top-10 z-0 w-60 sm:left-[-9rem] sm:top-14 sm:w-72 md:left-[-10rem] md:top-16 md:w-80 lg:left-[-11rem] lg:top-18 lg:w-[26rem]",
+      "absolute left-[-8rem] top-10 z-0 hidden w-60 sm:block sm:left-[-9rem] sm:top-14 sm:w-72 md:left-[-10rem] md:top-16 md:w-80 lg:left-[-11rem] lg:top-18 lg:w-[26rem]",
     rotate: 360,
     duration: 28,
     delay: 3,
@@ -55,7 +55,7 @@ const heroSpins = [
   {
     image: footballSpin,
     className:
-      "absolute bottom-8 right-4 z-0 w-56 sm:bottom-10 sm:right-6 sm:w-64 md:bottom-10 md:right-8 md:w-72 lg:bottom-12 lg:right-10 lg:w-[20rem]",
+      "absolute bottom-8 right-4 z-0 hidden w-56 sm:block sm:bottom-10 sm:right-6 sm:w-64 md:bottom-10 md:right-8 md:w-72 lg:bottom-12 lg:right-10 lg:w-[20rem]",
     rotate: 0,
     duration: 0,
     delay: 0,
@@ -131,7 +131,7 @@ const Index = () => {
               initial={{ opacity: 0, y: 50, rotate: -2 }}
               animate={{ opacity: 1, y: 0, rotate: 0 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-              className="relative h-[500px] sm:h-[600px] md:h-[680px] w-full max-w-[680px] mx-auto -translate-y-6 sm:-translate-y-8 md:-translate-y-12 lg:mx-0 lg:ml-20 lg:-translate-y-20"
+              className="relative h-[420px] sm:h-[600px] md:h-[680px] w-full max-w-[680px] mx-auto -translate-y-4 sm:-translate-y-8 md:-translate-y-12 lg:mx-0 lg:ml-20 lg:-translate-y-20"
             >
               <div className="absolute left-10 -top-6 w-[68%] h-[40%] overflow-hidden border-[10px] border-white bg-white scrapbook-rotate-2 z-10">
                 <img

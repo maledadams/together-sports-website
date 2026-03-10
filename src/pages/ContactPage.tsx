@@ -6,11 +6,11 @@ const ContactPage = () => {
   return (
     <div className="overflow-hidden">
       <section className="relative overflow-hidden bg-[#f6a15c]">
-        <div className="absolute left-8 top-10 h-20 w-20 rounded-full bg-white/10" />
-        <div className="absolute left-[22%] top-20 h-12 w-12 bg-white/10 scrapbook-rotate-2" />
-        <div className="absolute right-12 top-12 h-16 w-16 rotate-45 bg-white/10" />
-        <div className="absolute right-[24%] top-24 h-14 w-14 rounded-full bg-white/10" />
-        <div className="absolute right-20 bottom-8 h-10 w-10 bg-white/10 scrapbook-rotate-3" />
+        <div className="absolute left-4 top-8 h-14 w-14 rounded-full bg-white/10 sm:left-8 sm:top-10 sm:h-20 sm:w-20" />
+        <div className="absolute left-[22%] top-20 hidden h-12 w-12 bg-white/10 scrapbook-rotate-2 sm:block" />
+        <div className="absolute right-4 top-10 h-12 w-12 rotate-45 bg-white/10 sm:right-12 sm:top-12 sm:h-16 sm:w-16" />
+        <div className="absolute right-[24%] top-24 hidden h-14 w-14 rounded-full bg-white/10 sm:block" />
+        <div className="absolute right-10 bottom-8 h-8 w-8 bg-white/10 scrapbook-rotate-3 sm:right-20 sm:h-10 sm:w-10" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-24">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
@@ -18,9 +18,9 @@ const ContactPage = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h1 className="font-heading text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
-              <span className="whitespace-nowrap">Contact </span>
-              <span className="whitespace-nowrap">Us</span>
+            <h1 className="font-heading text-5xl sm:text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
+              <span className="sm:whitespace-nowrap">Contact </span>
+              <span className="sm:whitespace-nowrap">Us</span>
             </h1>
             <p className="text-white font-bold text-lg md:text-xl max-w-2xl mx-auto font-body">
               Questions, partnerships, volunteering, or support requests, reach out and we will point you in the right
@@ -80,7 +80,7 @@ const ContactPage = () => {
             </ScrollReveal>
 
             <ScrollReveal direction="right">
-              <div className="h-full min-h-[430px] flex items-center justify-center p-8 md:p-12">
+              <div className="h-full min-h-[260px] flex items-center justify-center p-6 sm:min-h-[320px] md:min-h-[430px] md:p-12">
                 <img src={contactLogo} alt="Together Sports logo" className="w-full max-w-md h-auto object-contain" />
               </div>
             </ScrollReveal>

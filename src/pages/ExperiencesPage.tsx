@@ -91,11 +91,11 @@ const ExperiencesPage = () => {
   return (
     <div className="overflow-hidden">
       <section className="relative overflow-hidden bg-[#84a6ff]">
-        <div className="absolute left-8 top-12 h-[4.5rem] w-[4.5rem] rounded-full bg-white/10 md:h-24 md:w-24" />
-        <div className="absolute left-[20%] top-8 h-14 w-14 bg-white/10 scrapbook-rotate-2" />
-        <div className="absolute right-10 top-10 h-20 w-20 rotate-45 bg-white/10 md:h-24 md:w-24" />
-        <div className="absolute right-[22%] top-28 h-12 w-12 rounded-full bg-white/10" />
-        <div className="absolute right-20 bottom-8 h-0 w-0 border-l-[22px] border-r-[22px] border-b-[38px] border-l-transparent border-r-transparent border-b-white/10" />
+        <div className="absolute left-4 top-10 h-12 w-12 rounded-full bg-white/10 sm:left-8 sm:top-12 sm:h-[4.5rem] sm:w-[4.5rem] md:h-24 md:w-24" />
+        <div className="absolute left-[20%] top-8 hidden h-14 w-14 bg-white/10 scrapbook-rotate-2 sm:block" />
+        <div className="absolute right-6 top-10 h-12 w-12 rotate-45 bg-white/10 sm:right-10 sm:h-20 sm:w-20 md:h-24 md:w-24" />
+        <div className="absolute right-[22%] top-28 hidden h-12 w-12 rounded-full bg-white/10 sm:block" />
+        <div className="absolute right-12 bottom-8 hidden h-0 w-0 border-l-[22px] border-r-[22px] border-b-[38px] border-l-transparent border-r-transparent border-b-white/10 md:block" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-24">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
@@ -103,9 +103,9 @@ const ExperiencesPage = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h1 className="font-heading text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
-              <span className="whitespace-nowrap">Our </span>
-              <span className="whitespace-nowrap">Experiences</span>
+            <h1 className="font-heading text-5xl sm:text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
+              <span className="sm:whitespace-nowrap">Our </span>
+              <span className="sm:whitespace-nowrap">Experiences</span>
             </h1>
             <p className="text-white font-bold text-lg md:text-xl max-w-2xl mx-auto font-body">
               Hear from the athletes, families, and coaches who make Together Sports what it is. These are their

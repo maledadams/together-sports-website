@@ -9,11 +9,11 @@ const AboutPage = () => {
   return (
     <div className="overflow-hidden">
       <section className="relative overflow-hidden bg-[#87cb4a]">
-        <div className="absolute left-10 top-10 h-20 w-20 rounded-full bg-white/10" />
-        <div className="absolute left-[18%] top-24 h-12 w-12 rotate-45 bg-white/10" />
-        <div className="absolute right-12 top-12 h-16 w-16 bg-white/10 scrapbook-rotate-2" />
-        <div className="absolute right-[17%] top-28 h-0 w-0 border-l-[24px] border-r-[24px] border-b-[40px] border-l-transparent border-r-transparent border-b-white/10" />
-        <div className="absolute left-16 bottom-8 h-10 w-10 bg-white/10 scrapbook-rotate-3" />
+        <div className="absolute left-4 top-8 h-12 w-12 rounded-full bg-white/10 sm:left-10 sm:top-10 sm:h-20 sm:w-20" />
+        <div className="absolute left-[18%] top-24 hidden h-12 w-12 rotate-45 bg-white/10 sm:block" />
+        <div className="absolute right-4 top-10 h-10 w-10 bg-white/10 scrapbook-rotate-2 sm:right-12 sm:top-12 sm:h-16 sm:w-16" />
+        <div className="absolute right-[17%] top-28 hidden h-0 w-0 border-l-[24px] border-r-[24px] border-b-[40px] border-l-transparent border-r-transparent border-b-white/10 md:block" />
+        <div className="absolute left-10 bottom-8 h-8 w-8 bg-white/10 scrapbook-rotate-3 sm:left-16 sm:h-10 sm:w-10" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-24">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
@@ -21,9 +21,9 @@ const AboutPage = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h1 className="font-heading text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
-              <span className="whitespace-nowrap">Meet The </span>
-              <span className="whitespace-nowrap">Team</span>
+            <h1 className="font-heading text-5xl sm:text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
+              <span className="sm:whitespace-nowrap">Meet The </span>
+              <span className="sm:whitespace-nowrap">Team</span>
             </h1>
             <p className="text-white font-bold text-lg md:text-xl max-w-2xl mx-auto font-body">
               The people behind Together Sports are coaches, mentors, athletes, and community builders creating spaces where young people can grow through sport.
@@ -33,18 +33,18 @@ const AboutPage = () => {
       </section>
 
       <section className="relative overflow-hidden bg-[#87cb4a] py-12 md:py-16">
-        <div className="absolute left-4 top-14 h-20 w-20 rounded-full bg-white/10" />
-        <div className="absolute left-10 top-1/3 h-12 w-12 rotate-45 bg-white/10" />
-        <div className="absolute left-6 bottom-28 h-16 w-16 bg-white/10 scrapbook-rotate-2" />
-        <div className="absolute left-[14%] bottom-10 h-0 w-0 border-l-[20px] border-r-[20px] border-b-[34px] border-l-transparent border-r-transparent border-b-white/10" />
-        <div className="absolute left-[22%] top-8 h-10 w-10 rounded-full bg-white/10" />
-        <div className="absolute right-4 top-16 h-16 w-16 rotate-45 bg-white/10" />
-        <div className="absolute right-10 top-[30%] h-14 w-14 bg-white/10 scrapbook-rotate-2" />
-        <div className="absolute right-6 bottom-24 h-20 w-20 rounded-full bg-white/10" />
-        <div className="absolute right-[14%] bottom-12 h-0 w-0 border-l-[22px] border-r-[22px] border-b-[38px] border-l-transparent border-r-transparent border-b-white/10" />
-        <div className="absolute right-[22%] top-10 h-10 w-10 bg-white/10 scrapbook-rotate-3" />
-        <div className="absolute left-1/2 top-6 h-8 w-8 -translate-x-1/2 rounded-full bg-white/10" />
-        <div className="absolute left-1/2 bottom-6 h-12 w-12 -translate-x-1/2 rotate-45 bg-white/10" />
+        <div className="absolute left-4 top-14 h-14 w-14 rounded-full bg-white/10 sm:h-20 sm:w-20" />
+        <div className="absolute left-10 top-1/3 hidden h-12 w-12 rotate-45 bg-white/10 sm:block" />
+        <div className="absolute left-6 bottom-28 hidden h-16 w-16 bg-white/10 scrapbook-rotate-2 sm:block" />
+        <div className="absolute left-[14%] bottom-10 hidden h-0 w-0 border-l-[20px] border-r-[20px] border-b-[34px] border-l-transparent border-r-transparent border-b-white/10 md:block" />
+        <div className="absolute left-[22%] top-8 h-8 w-8 rounded-full bg-white/10 sm:h-10 sm:w-10" />
+        <div className="absolute right-4 top-16 h-12 w-12 rotate-45 bg-white/10 sm:h-16 sm:w-16" />
+        <div className="absolute right-10 top-[30%] hidden h-14 w-14 bg-white/10 scrapbook-rotate-2 sm:block" />
+        <div className="absolute right-6 bottom-24 hidden h-20 w-20 rounded-full bg-white/10 sm:block" />
+        <div className="absolute right-[14%] bottom-12 hidden h-0 w-0 border-l-[22px] border-r-[22px] border-b-[38px] border-l-transparent border-r-transparent border-b-white/10 md:block" />
+        <div className="absolute right-[22%] top-10 hidden h-10 w-10 bg-white/10 scrapbook-rotate-3 sm:block" />
+        <div className="absolute left-1/2 top-6 h-6 w-6 -translate-x-1/2 rounded-full bg-white/10 sm:h-8 sm:w-8" />
+        <div className="absolute left-1/2 bottom-6 hidden h-12 w-12 -translate-x-1/2 rotate-45 bg-white/10 sm:block" />
 
         <div className="relative z-10 max-w-[92rem] mx-auto px-3 sm:px-4 lg:px-5">
           <div className="bg-white px-6 py-10 md:px-10 md:py-12">

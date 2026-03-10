@@ -29,14 +29,14 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary border-b border-primary/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-6 h-16 md:h-20">
-          <Link to="/" className="flex items-center gap-3">
+        <div className="flex h-16 items-center justify-between gap-3 md:h-20 md:gap-6">
+          <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
             <img
               src={headerLogo}
               alt="Together Sports logo"
-              className="relative -translate-y-0.5 h-8 w-auto shrink-0 md:h-10"
+              className="relative -translate-y-0.5 h-7 w-auto shrink-0 sm:h-8 md:h-10"
             />
-            <span className="flex items-center font-heading text-2xl md:text-3xl font-black uppercase tracking-wider leading-none text-[#ffffff]">
+            <span className="flex min-w-0 items-center font-heading text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-[0.08em] sm:tracking-wider leading-none text-[#ffffff]">
               Together Sports
             </span>
           </Link>
@@ -95,7 +95,7 @@ const Navbar = () => {
           {/* Mobile toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-[#ffffff]"
+            className="p-2 text-[#ffffff] lg:hidden"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
@@ -111,13 +111,13 @@ const Navbar = () => {
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden bg-primary border-b border-primary/80 overflow-hidden"
           >
-            <div className="px-4 py-4 space-y-1">
+            <div className="space-y-1 px-4 py-4">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 text-lg font-[Montserrat] font-bold uppercase tracking-wider text-[#ffffff] transition-colors hover:text-[#84a6ff]"
+                  className="block px-4 py-3 text-base sm:text-lg font-[Montserrat] font-bold uppercase tracking-wider text-[#ffffff] transition-colors hover:text-[#84a6ff]"
                 >
                   {item.label}
                 </Link>
@@ -125,7 +125,7 @@ const Navbar = () => {
               <Link
                 to="/get-involved"
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-lg font-[Montserrat] font-bold uppercase tracking-wider bg-[#ffffff] text-primary"
+                className="block bg-[#ffffff] px-4 py-3 text-base sm:text-lg font-[Montserrat] font-bold uppercase tracking-wider text-primary"
               >
                 Get Involved
               </Link>

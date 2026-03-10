@@ -10,14 +10,11 @@ const PartnersPage = () => {
   return (
     <div className="overflow-hidden">
       {/* INFINITE CAROUSEL */}
-      <section className="pt-20 pb-32 md:pt-28 md:pb-40 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+      <section className="pb-32 md:pb-40 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-28 mb-24 md:mb-28">
           <ScrollReveal>
             <div className="text-center">
-              <p className="font-body font-bold uppercase tracking-[0.3em] text-primary text-sm mb-4">
-                Our Network
-              </p>
-              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase text-foreground">
+              <h2 className="font-heading text-6xl md:text-[5.25rem] font-black uppercase text-foreground">
                 Meet Our Partners
               </h2>
             </div>

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
-import { blogPosts } from "@/data/blogPosts";
+import { useEditableContent } from "@/lib/editable-content";
 
 const formatDate = (value: string) =>
   new Date(value).toLocaleDateString("en-US", {
@@ -11,11 +11,18 @@ const formatDate = (value: string) =>
   });
 
 const BlogPage = () => {
-  const [featured, ...posts] = blogPosts;
+  const { blogPosts } = useEditableContent();
+  const featured = blogPosts.find((post) => post.featured) ?? blogPosts[0];
+  const posts = featured ? blogPosts.filter((post) => post.slug !== featured.slug) : blogPosts;
 
   return (
     <div className="overflow-hidden">
       <section className="relative overflow-hidden bg-[#ab9bfa]">
+        <div className="absolute left-12 top-10 h-14 w-14 rotate-45 bg-white/10" />
+        <div className="absolute left-[24%] top-24 h-20 w-20 rounded-full bg-white/10" />
+        <div className="absolute right-10 top-8 h-16 w-16 bg-white/10 scrapbook-rotate-1" />
+        <div className="absolute right-[18%] top-24 h-0 w-0 border-l-[24px] border-r-[24px] border-b-[42px] border-l-transparent border-r-transparent border-b-white/10" />
+        <div className="absolute left-20 bottom-8 h-10 w-10 rounded-full bg-white/10" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-24">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
@@ -23,12 +30,12 @@ const BlogPage = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h1 className="font-heading text-5xl md:text-7xl font-black uppercase leading-[0.95] mb-4 text-white">
+            <h1 className="font-heading text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
               <span className="whitespace-nowrap">The </span>
               <span className="whitespace-nowrap">Blog</span>
             </h1>
             <p className="text-white font-bold text-lg md:text-xl max-w-2xl mx-auto font-body">
-              Synced from Together Sports on Substack, rendered here as native website posts.
+              Stories, updates, and moments from Together Sports, all in one place on the site.
             </p>
           </motion.div>
         </div>
@@ -53,10 +60,12 @@ const BlogPage = () => {
                   <div className="absolute inset-0 bg-gradient-to-br from-deep-blue via-primary/80 to-primary/40" />
                   <div className="relative z-10 flex min-h-[420px] md:min-h-[520px] items-end p-8 md:p-12">
                     <div className="max-w-3xl">
-                      <span className="inline-block px-3 py-1 bg-accent text-white font-heading font-bold text-xs uppercase tracking-wider mb-4">
-                        Featured
-                      </span>
-                      <h2 className="font-heading text-3xl md:text-6xl font-black uppercase text-white group-hover:text-accent transition-colors mb-4">
+                      {featured.tag || featured.featured ? (
+                        <span className="inline-block px-3 py-1 bg-accent text-white font-heading font-bold text-xs uppercase tracking-wider mb-4">
+                          {featured.tag?.trim() || "Featured"}
+                        </span>
+                      ) : null}
+                      <h2 className="font-heading text-3xl md:text-6xl font-black uppercase text-white mb-4">
                         {featured.title}
                       </h2>
                       <p className="text-white/75 text-lg md:text-xl max-w-2xl">{featured.excerpt}</p>
@@ -88,10 +97,15 @@ const BlogPage = () => {
                           <div className="absolute inset-0 bg-gradient-to-br from-deep-blue via-primary/75 to-primary/35" />
                           <div className="relative z-10 flex min-h-[280px] items-end p-6 md:p-8">
                             <div>
+                              {post.tag?.trim() ? (
+                                <span className="inline-block px-3 py-1 mb-3 bg-white/15 text-white font-heading font-bold text-[11px] uppercase tracking-[0.18em]">
+                                  {post.tag.trim()}
+                                </span>
+                              ) : null}
                               <p className="text-white/50 text-xs font-body uppercase tracking-[0.18em] mb-3">
                                 {formatDate(post.publishedAt)}
                               </p>
-                              <h3 className="font-heading text-2xl md:text-3xl font-black uppercase text-white group-hover:text-accent transition-colors mb-3">
+                              <h3 className="font-heading text-2xl md:text-3xl font-black uppercase text-white mb-3">
                                 {post.title}
                               </h3>
                               <p className="text-white/70 text-sm md:text-base max-w-xl">{post.excerpt}</p>
@@ -105,11 +119,10 @@ const BlogPage = () => {
               ) : (
                 <ScrollReveal>
                   <div className="border border-border bg-card p-8 md:p-12">
-                    <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Synced Feed</p>
-                    <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-4">More Stories Coming Soon</h2>
+                    <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-4">More Stories Are On The Way</h2>
                     <p className="text-muted-foreground text-lg max-w-2xl">
-                      The blog is now connected to Together Sports on Substack and refreshes automatically. New articles
-                      will appear here as internal posts after the next sync cycle.
+                      New stories, updates, and community moments will be shared here soon. Check back for the latest
+                      from Together Sports.
                     </p>
                   </div>
                 </ScrollReveal>
@@ -123,10 +136,9 @@ const BlogPage = () => {
             <ScrollReveal>
               <div className="border border-border bg-card p-8 md:p-12">
                 <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Blog</p>
-                <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-4">No Synced Posts Yet</h2>
+                <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-4">Stories Are Coming Soon</h2>
                 <p className="text-muted-foreground text-lg max-w-2xl">
-                  The placeholder posts are gone. Once Substack publishes a post into the feed, it will be pulled in
-                  automatically and open here as an internal blog page.
+                  Fresh stories and updates will appear here soon. Visit again to see what Together Sports has been up to.
                 </p>
               </div>
             </ScrollReveal>

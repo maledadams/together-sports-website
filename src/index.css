@@ -72,6 +72,31 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
+    scrollbar-color: #87cb4a transparent;
+  }
+
+  html {
+    scrollbar-color: #87cb4a transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #ffffff;
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #87cb4a;
+    border: 3px solid #ffffff;
+    border-radius: 9999px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #6fb03a;
   }
 
   p {

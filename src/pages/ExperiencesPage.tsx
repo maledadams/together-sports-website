@@ -10,10 +10,18 @@ const sportAccent: Record<string, string> = {
   Golf: "text-[hsl(var(--sport-golf))]",
 };
 
+const renderStars = (rating?: number) => {
+  if (!rating || rating < 1) {
+    return null;
+  }
+
+  return "★".repeat(Math.min(Math.max(rating, 1), 5));
+};
+
 const QuoteCard = ({ item, index }: { item: Experience; index: number }) => {
   return (
     <ScrollReveal direction="up" delay={index * 0.1}>
-      <div className="p-8 bg-background border border-border hover:border-accent transition-colors duration-300 h-full">
+      <div className="h-full p-8 bg-background border border-border hover:border-accent transition-colors duration-300 text-center">
         <p className={`font-heading font-bold uppercase text-sm mb-4 ${sportAccent[item.sport || ""] || "text-accent"}`}>
           {item.sport || "Together Sports"}
         </p>
@@ -21,8 +29,11 @@ const QuoteCard = ({ item, index }: { item: Experience; index: number }) => {
           "{item.quote}"
         </p>
         <p className="text-muted-foreground font-heading font-bold uppercase">
-          {item.age ? `— ${item.name}, ${item.age}` : `— ${item.name}`}
+          {item.age ? `- ${item.name}, ${item.age}` : `- ${item.name}`}
         </p>
+        {item.rating ? (
+          <p className="mt-3 font-heading text-lg tracking-[0.22em] text-[#f6a15c]">{renderStars(item.rating)}</p>
+        ) : null}
       </div>
     </ScrollReveal>
   );
@@ -31,7 +42,7 @@ const QuoteCard = ({ item, index }: { item: Experience; index: number }) => {
 const PhotoCard = ({ item, index }: { item: Experience; index: number }) => {
   return (
     <ScrollReveal direction="scale" delay={index * 0.12}>
-      <div>
+      <div className="text-center">
         <img
           src={item.image || ""}
           alt={item.caption || "Experience photo"}
@@ -39,7 +50,9 @@ const PhotoCard = ({ item, index }: { item: Experience; index: number }) => {
           loading="lazy"
         />
         {item.caption ? (
-          <p className="mt-3 text-muted-foreground text-sm font-body italic">{item.caption}</p>
+          <p className="mt-3 text-muted-foreground text-sm font-body italic">
+            {item.caption}
+          </p>
         ) : null}
       </div>
     </ScrollReveal>
@@ -60,7 +73,7 @@ const VideoCard = ({ item, index }: { item: Experience; index: number }) => (
         />
       </div>
       {item.videoTitle ? (
-        <div className="p-4">
+        <div className="p-4 text-center">
           <p className="font-heading font-bold uppercase text-sm">{item.videoTitle}</p>
         </div>
       ) : null}
@@ -78,6 +91,11 @@ const ExperiencesPage = () => {
   return (
     <div className="overflow-hidden">
       <section className="relative overflow-hidden bg-[#84a6ff]">
+        <div className="absolute left-8 top-12 h-[4.5rem] w-[4.5rem] rounded-full bg-white/10 md:h-24 md:w-24" />
+        <div className="absolute left-[20%] top-8 h-14 w-14 bg-white/10 scrapbook-rotate-2" />
+        <div className="absolute right-10 top-10 h-20 w-20 rotate-45 bg-white/10 md:h-24 md:w-24" />
+        <div className="absolute right-[22%] top-28 h-12 w-12 rounded-full bg-white/10" />
+        <div className="absolute right-20 bottom-8 h-0 w-0 border-l-[22px] border-r-[22px] border-b-[38px] border-l-transparent border-r-transparent border-b-white/10" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-24">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
@@ -85,22 +103,38 @@ const ExperiencesPage = () => {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h1 className="font-heading text-5xl md:text-7xl font-black uppercase leading-[0.95] mb-4 text-white">
+            <h1 className="font-heading text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
               <span className="whitespace-nowrap">Our </span>
               <span className="whitespace-nowrap">Experiences</span>
             </h1>
             <p className="text-white font-bold text-lg md:text-xl max-w-2xl mx-auto font-body">
-              Hear from the athletes, families, and coaches who make Together Sports what it is. These are their words, their moments, and their stories.
+              Hear from the athletes, families, and coaches who make Together Sports what it is. These are their
+              words, their moments, and their stories.
             </p>
           </motion.div>
         </div>
       </section>
 
+      {photos.length > 0 ? (
+        <section className="pt-20 pb-12 md:pt-28 md:pb-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal>
+              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12 text-center">Moments Captured</h2>
+            </ScrollReveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {photos.map((p, i) => (
+                <PhotoCard key={p.id} item={p} index={i} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <section className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12">
-              In Their <span className="brush-underline">Words</span>
+            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12 text-center">
+              In <span className="brush-underline">Their</span> Words
             </h2>
           </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -112,15 +146,10 @@ const ExperiencesPage = () => {
       </section>
 
       {parentQuotes.length > 0 ? (
-        <section className="py-20 md:py-28 bg-card scratchy-overlay">
+        <section className="py-20 md:py-28 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal>
-              <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">
-                From the Families
-              </p>
-              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12">
-                Parents <span className="text-stroke">Speak</span>
-              </h2>
+              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12 text-center">Parents Speak</h2>
             </ScrollReveal>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {parentQuotes.map((q, i) => (
@@ -131,29 +160,12 @@ const ExperiencesPage = () => {
         </section>
       ) : null}
 
-      {photos.length > 0 ? (
-        <section className="py-20 md:py-28 bg-card scratchy-overlay">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ScrollReveal>
-              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12">
-                Moments <span className="text-stroke">Captured</span>
-              </h2>
-            </ScrollReveal>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {photos.map((p, i) => (
-                <PhotoCard key={p.id} item={p} index={i} />
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
-
       {videos.length > 0 ? (
         <section className="py-20 md:py-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal>
-              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12">
-                Watch <span className="brush-underline">Us Play</span>
+              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12 text-center">
+                Watch <span className="brush-underline">Us</span> Play
               </h2>
             </ScrollReveal>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

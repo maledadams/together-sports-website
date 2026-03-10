@@ -1,14 +1,17 @@
 import { useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Download, FileText, Images, LoaderCircle, LogOut, RefreshCcw, Save, Upload, Users } from "lucide-react";
+import { Download, FileText, Images, LoaderCircle, LogOut, Newspaper, RefreshCcw, Save, Upload, Users } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { BlogPost } from "@/data/blogPosts";
 import { mediaLibrary } from "@/data/mediaLibrary";
 import type { Experience, ExperienceType } from "@/data/experiences";
 import type { Partner } from "@/data/partners";
 import type { TeamPerson, TeamSection, TeamSocialPlatform } from "@/data/team";
+import type { TennisLessonVideo } from "@/lib/editable-content-format";
 import { useEditableContent } from "@/lib/editable-content";
+import { normalizeYouTubeEmbedUrl } from "@/lib/youtube";
 
 const inputClass =
   "w-full border border-border bg-white px-4 py-3 text-foreground font-body focus:border-accent focus:outline-none";
@@ -174,6 +177,26 @@ const TestimonialFields = ({
               placeholder="16 or Parent"
             />
           </div>
+          <div className="space-y-2">
+            <p className={labelClass}>Star Rating</p>
+            <select
+              className={inputClass}
+              value={String(item.rating || "")}
+              onChange={(event) =>
+                onChange({
+                  ...item,
+                  rating: event.target.value ? Number(event.target.value) : undefined,
+                })
+              }
+            >
+              <option value="">No rating</option>
+              <option value="1">1 star</option>
+              <option value="2">2 stars</option>
+              <option value="3">3 stars</option>
+              <option value="4">4 stars</option>
+              <option value="5">5 stars</option>
+            </select>
+          </div>
           <div className="space-y-2 md:col-span-2">
             <p className={labelClass}>Quote</p>
             <textarea
@@ -236,12 +259,16 @@ const TestimonialFields = ({
 
 const AdminPage = () => {
   const {
+    blogPosts,
     experiences,
     partners,
     teamSections,
+    tennisLessonVideos,
+    setBlogPosts,
     setExperiences,
     setPartners,
     setTeamSections,
+    setTennisLessonVideos,
     resetAll,
     saveContent,
     refreshContent,
@@ -348,6 +375,19 @@ const AdminPage = () => {
     setExperiences((current) => current.map((item) => (item.id === id ? next : item)));
   };
 
+  const updateBlogPost = (slug: string, updater: (post: BlogPost) => BlogPost) => {
+    setBlogPosts((current) => current.map((post) => (post.slug === slug ? updater(post) : post)));
+  };
+
+  const setFeaturedPost = (slug: string, featured: boolean) => {
+    setBlogPosts((current) =>
+      current.map((post) => ({
+        ...post,
+        featured: featured ? post.slug === slug : post.slug === slug ? false : post.featured,
+      })),
+    );
+  };
+
   const updatePartner = (id: string, field: keyof Partner, value: string) => {
     setPartners((current) => current.map((item) => (item.id === id ? { ...item, [field]: value } : item)));
   };
@@ -365,6 +405,14 @@ const AdminPage = () => {
       ),
     );
   };
+
+  const updateTennisLessonVideo = (id: string, next: TennisLessonVideo) => {
+    setTennisLessonVideos((current) => current.map((item) => (item.id === id ? next : item)));
+  };
+
+  const hasInvalidTennisLessonVideos = tennisLessonVideos.some(
+    (item) => item.youtubeUrl.trim() && !normalizeYouTubeEmbedUrl(item.youtubeUrl),
+  );
 
   if (authLoading) {
     return (
@@ -470,7 +518,7 @@ const AdminPage = () => {
               <button
                 type="button"
                 onClick={handleSave}
-                disabled={isSaving || (isSupabaseConfigured && !hasUnsavedChanges)}
+                disabled={isSaving || hasInvalidTennisLessonVideos || (isSupabaseConfigured && !hasUnsavedChanges)}
                 className="px-5 py-3 bg-accent text-white font-heading font-bold uppercase tracking-wider text-sm inline-flex items-center gap-2 disabled:opacity-60"
               >
                 {isSaving ? <LoaderCircle size={16} className="animate-spin" /> : <Save size={16} />}
@@ -534,6 +582,9 @@ const AdminPage = () => {
             {userEmail ? ` | Signed in as ${userEmail}` : ""}
           </p>
           {isLoadingContent ? <p className="mt-2 text-sm text-muted-foreground">Loading live content...</p> : null}
+          {hasInvalidTennisLessonVideos ? (
+            <p className="mt-2 text-sm text-[#8d5120]">Fix the tennis lesson videos so they are valid YouTube links before saving.</p>
+          ) : null}
           {statusMessage ? <p className="mt-2 text-sm text-primary">{statusMessage}</p> : null}
         </div>
       </section>
@@ -544,6 +595,10 @@ const AdminPage = () => {
             <TabsTrigger value="testimonials" className="px-4 py-3 data-[state=active]:bg-primary data-[state=active]:text-white">
               <FileText size={16} className="mr-2" />
               Testimonials
+            </TabsTrigger>
+            <TabsTrigger value="blog" className="px-4 py-3 data-[state=active]:bg-primary data-[state=active]:text-white">
+              <Newspaper size={16} className="mr-2" />
+              Blog
             </TabsTrigger>
             <TabsTrigger value="partners" className="px-4 py-3 data-[state=active]:bg-primary data-[state=active]:text-white">
               <Images size={16} className="mr-2" />
@@ -563,7 +618,7 @@ const AdminPage = () => {
                   onClick={() =>
                     setExperiences((current) => [
                       ...current,
-                      { id: createId("quote"), type: "quote", sport: "Tennis", name: "New Name", age: "16", quote: "New quote" },
+                      { id: createId("quote"), type: "quote", sport: "Tennis", name: "New Name", age: "16", quote: "New quote", rating: 5 },
                     ])
                   }
                   className="px-4 py-3 bg-primary text-white font-heading font-bold uppercase text-sm tracking-wider"
@@ -575,7 +630,7 @@ const AdminPage = () => {
                   onClick={() =>
                     setExperiences((current) => [
                       ...current,
-                      { id: createId("parent"), type: "parent", sport: "Tennis", name: "Parent Name", quote: "Parent quote" },
+                      { id: createId("parent"), type: "parent", sport: "Tennis", name: "Parent Name", quote: "Parent quote", rating: 5 },
                     ])
                   }
                   className="px-4 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase text-sm tracking-wider"
@@ -609,6 +664,108 @@ const AdminPage = () => {
               </div>
             </ScrollReveal>
 
+            <div className="mb-8">
+              <EditorCard>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-heading text-2xl font-black uppercase">Tennis How Lessons Work</p>
+                    <p className="text-muted-foreground text-sm">
+                      Add up to 2 YouTube videos for the tennis page. If none are saved, the section stays hidden.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setTennisLessonVideos((current) => [
+                        ...current,
+                        { id: createId("lesson-video"), title: "Lesson Video", youtubeUrl: "" },
+                      ].slice(0, 2))
+                    }
+                    disabled={tennisLessonVideos.length >= 2}
+                    className="px-4 py-3 border border-border bg-white text-foreground font-heading font-bold uppercase text-sm tracking-wider disabled:opacity-60"
+                  >
+                    + Add Lesson Video
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {tennisLessonVideos.length === 0 ? (
+                    <p className="text-muted-foreground">No lesson videos added yet.</p>
+                  ) : null}
+
+                  {tennisLessonVideos.map((video) => {
+                    const normalizedUrl = normalizeYouTubeEmbedUrl(video.youtubeUrl);
+                    const hasInvalidUrl = video.youtubeUrl.trim().length > 0 && !normalizedUrl;
+
+                    return (
+                      <div key={video.id} className="border border-border bg-white p-5 space-y-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="font-heading text-xl font-black uppercase">{video.title || "Lesson Video"}</p>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setTennisLessonVideos((current) => current.filter((item) => item.id !== video.id))
+                            }
+                            className="px-4 py-2 border border-border bg-card text-foreground font-heading font-bold uppercase text-xs tracking-wider"
+                          >
+                            Remove
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <p className={labelClass}>Video Title</p>
+                            <input
+                              className={inputClass}
+                              value={video.title}
+                              onChange={(event) =>
+                                updateTennisLessonVideo(video.id, { ...video, title: event.target.value })
+                              }
+                              placeholder="Lesson walkthrough"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <p className={labelClass}>YouTube URL</p>
+                            <input
+                              type="url"
+                              className={inputClass}
+                              value={video.youtubeUrl}
+                              onChange={(event) =>
+                                updateTennisLessonVideo(video.id, { ...video, youtubeUrl: event.target.value })
+                              }
+                              onBlur={(event) => {
+                                const normalized = normalizeYouTubeEmbedUrl(event.target.value);
+                                if (normalized) {
+                                  updateTennisLessonVideo(video.id, { ...video, youtubeUrl: normalized });
+                                }
+                              }}
+                              placeholder="https://www.youtube.com/watch?v=..."
+                            />
+                            <p className={`text-xs ${hasInvalidUrl ? "text-[#8d5120]" : "text-muted-foreground"}`}>
+                              YouTube only. Watch, share, shorts, and embed links are all accepted.
+                            </p>
+                          </div>
+                          {normalizedUrl ? (
+                            <div className="md:col-span-2 border border-border overflow-hidden">
+                              <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                                <iframe
+                                  src={normalizedUrl}
+                                  title={video.title || "Tennis lesson video preview"}
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                  allowFullScreen
+                                  className="absolute inset-0 h-full w-full"
+                                />
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </EditorCard>
+            </div>
+
             <div className="space-y-6">
               {experiences.map((item) => (
                 <EditorCard key={item.id}>
@@ -632,6 +789,72 @@ const AdminPage = () => {
                   </div>
 
                   <TestimonialFields item={item} onChange={(next) => updateExperience(item.id, next)} onUpload={uploadImage} />
+                </EditorCard>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="blog">
+            <div className="space-y-6">
+              {blogPosts.map((post) => (
+                <EditorCard key={post.slug}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="font-heading text-2xl font-black uppercase">{post.title}</p>
+                      <p className="text-muted-foreground text-sm">{post.slug}</p>
+                    </div>
+                    <Link
+                      to={`/blog/${post.slug}`}
+                      className="px-4 py-2 border border-border bg-white text-foreground font-heading font-bold uppercase text-xs tracking-wider"
+                    >
+                      View Post
+                    </Link>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className={labelClass}>Tag Label</p>
+                      <input
+                        className={inputClass}
+                        value={post.tag || ""}
+                        onChange={(event) =>
+                          updateBlogPost(post.slug, (current) => ({
+                            ...current,
+                            tag: event.target.value,
+                          }))
+                        }
+                        placeholder="Optional tag text"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Leave blank for no custom tag. Only one tag shows at a time.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className={labelClass}>Featured Badge</p>
+                      <label className="flex min-h-[54px] items-center gap-3 border border-border bg-white px-4 py-3">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(post.featured)}
+                          onChange={(event) => setFeaturedPost(post.slug, event.target.checked)}
+                          className="h-4 w-4 accent-[hsl(var(--primary))]"
+                        />
+                        <span className="text-sm text-foreground">
+                          {post.featured ? "Showing Featured badge on this post." : "No Featured badge on this post."}
+                        </span>
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        Turning this on removes Featured from the other blog posts.
+                      </p>
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <p className={labelClass}>Read Only Post Info</p>
+                      <div className="border border-border bg-white px-4 py-3 text-sm text-muted-foreground space-y-1">
+                        <p>Date: {post.publishedAt}</p>
+                        <p>Author: {post.author}</p>
+                        <p>Source: {post.sourceUrl}</p>
+                      </div>
+                    </div>
+                  </div>
                 </EditorCard>
               ))}
             </div>

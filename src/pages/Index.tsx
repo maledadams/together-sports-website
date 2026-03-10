@@ -205,29 +205,29 @@ const Index = () => {
                   title: "Access",
                   desc: "Every kid plays, regardless of background or income.",
                   bg: "bg-[#f6a15c]",
-                  hoverBorder: "hover:border-[#8d5120]",
+                  hoverMotion: "hover:-rotate-1",
                 },
                 {
                   title: "Growth",
                   desc: "Sports build character, discipline, and confidence.",
                   bg: "bg-[#87cb4a]",
-                  hoverBorder: "hover:border-[#285400]",
+                  hoverMotion: "hover:rotate-1",
                 },
                 {
                   title: "Community",
                   desc: "We rise together — athletes, mentors, families.",
                   bg: "bg-[#ab9bfa]",
-                  hoverBorder: "hover:border-[#5646a8]",
+                  hoverMotion: "hover:-rotate-1",
                 },
               ].map((value, index) => (
                 <ScrollReveal key={value.title} delay={index * 0.12}>
                   <div
-                    className={`group border-2 border-transparent p-8 md:p-10 transition-colors duration-300 ${value.bg} ${value.hoverBorder}`}
+                    className={`group border-2 border-transparent p-8 md:p-10 transition-all duration-200 hover:scale-105 ${value.bg} ${value.hoverMotion}`}
                   >
-                    <h4 className="font-heading text-3xl md:text-4xl font-black uppercase mb-4 text-white transition-colors duration-300">
+                    <h4 className="font-heading text-3xl md:text-4xl font-black uppercase mb-4 text-white">
                       {value.title}
                     </h4>
-                    <p className="text-lg md:text-xl leading-relaxed text-white transition-colors duration-300">
+                    <p className="text-lg md:text-xl leading-relaxed text-white">
                       {value.desc}
                     </p>
                   </div>
@@ -266,10 +266,68 @@ const Index = () => {
         </div>
       </section>
 
+      {/* TESTIMONIALS */}
+      <section className="py-12 md:py-16 bg-[#87cb4a] relative overflow-hidden">
+        <div className="absolute inset-0 scratchy-overlay" />
+        <div className="absolute -top-8 -left-8 h-28 w-28 rounded-full bg-white/10 scrapbook-rotate-2" />
+        <div className="absolute left-1/4 top-10 h-20 w-20 rounded-full bg-white/10 xl:left-[26%] xl:top-12 xl:h-24 xl:w-24" />
+        <div className="absolute top-10 right-8 h-14 w-14 bg-white/10 scrapbook-rotate-3" />
+        <div className="absolute -bottom-10 right-0 h-40 w-40 bg-white/10 scrapbook-rotate-1" />
+        <div className="absolute left-6 top-1/2 h-48 w-48 -translate-y-1/2 rounded-full bg-white/10 xl:h-64 xl:w-64" />
+        <div className="absolute right-32 top-20 h-24 w-24 rotate-45 bg-white/10 xl:right-40 xl:top-24 xl:h-32 xl:w-32" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="px-6 py-8 md:px-10 md:py-10 lg:px-12">
+            <ScrollReveal>
+              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-white text-center">
+                Testimonials
+              </h2>
+              <p className="text-white font-bold text-lg mb-20 max-w-lg mx-auto text-center">
+                The little stories that show the big picture: connection, encouragement, and growth.
+              </p>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              {featuredTestimonials.map((testimonial, i) => (
+                <ScrollReveal key={testimonial.id} delay={i * 0.15}>
+                  <div
+                    className={`relative bg-white p-8 md:p-10 transition-all duration-200 hover:scale-105 ${
+                      i === 1
+                        ? "md:-translate-y-6 scrapbook-rotate-2 hover:rotate-1"
+                        : i === 2
+                          ? "scrapbook-rotate-3 hover:-rotate-1"
+                          : "scrapbook-rotate-1 hover:-rotate-1"
+                    }`}
+                  >
+                    <span
+                      className="absolute -top-5 left-6 font-heading text-8xl leading-none select-none pointer-events-none"
+                      style={{
+                        color: i === 0 ? "#ab9bfa" : i === 1 ? "#f6a15c" : "#84a6ff",
+                        WebkitTextStroke: "2px white",
+                      }}
+                    >
+                      &ldquo;
+                    </span>
+                    <p className="text-foreground text-base md:text-lg leading-relaxed mb-6 relative z-10 italic">
+                      &ldquo;{testimonial.quote || ""}&rdquo;
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-1 ${i === 0 ? 'bg-[#ab9bfa]' : i === 1 ? 'bg-[#f6a15c]' : 'bg-[#84a6ff]'}`} />
+                      <span className="font-heading font-bold uppercase text-sm tracking-wider text-foreground">
+                        {testimonial.name}
+                      </span>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SECOND SERVE */}
-      <section className="py-20 md:py-32 relative overflow-hidden">
+      <section className="pt-20 pb-16 md:pt-20 md:pb-20 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             <ScrollReveal direction="left">
               <div className="relative">
                 <div className="scrapbook-rotate-1">
@@ -306,54 +364,8 @@ const Index = () => {
                 Learn More
               </Link>
             </ScrollReveal>
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section className="py-20 md:py-32 bg-[#87cb4a] scratchy-overlay relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-white text-center">
-              Testimonials
-            </h2>
-            <p className="text-white font-bold text-lg mb-16 max-w-lg mx-auto text-center">
-              The little stories that show the big picture: connection, encouragement, and growth.
-            </p>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {featuredTestimonials.map((testimonial, i) => (
-              <ScrollReveal key={testimonial.id} delay={i * 0.15}>
-                <div
-                  className={`relative bg-white p-8 md:p-10 transition-colors duration-300 ${
-                    i === 1 ? "md:-translate-y-6 scrapbook-rotate-2" : i === 2 ? "scrapbook-rotate-3" : "scrapbook-rotate-1"
-                  }`}
-                >
-                  <span
-                    className="absolute -top-5 left-6 font-heading text-8xl leading-none select-none pointer-events-none"
-                    style={{
-                      color: i === 0 ? "#ab9bfa" : i === 1 ? "#f6a15c" : "#84a6ff",
-                      WebkitTextStroke: "2px white",
-                    }}
-                  >
-                    &ldquo;
-                  </span>
-                  <p className="text-foreground text-base md:text-lg leading-relaxed mb-6 relative z-10 italic">
-                    &ldquo;{testimonial.quote || ""}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-1 ${i === 0 ? 'bg-[#ab9bfa]' : i === 1 ? 'bg-[#f6a15c]' : 'bg-[#84a6ff]'}`} />
-                    <span className="font-heading font-bold uppercase text-sm tracking-wider text-foreground">
-                      {testimonial.name}
-                    </span>
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-
-        </div>
       </section>
 
       {/* LOCATION */}
@@ -361,7 +373,10 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 whitespace-nowrap">
-              Our <span className="brush-underline">Location</span>
+              Our <span className="brush-underline inline-block">Location</span>
+              <span className="ml-2 inline-block text-[0.9em] normal-case align-[0.02em] md:ml-3">
+                📍
+              </span>
             </h2>
             <p className="text-muted-foreground text-lg mb-12">
               Based in New York City, serving communities across the five boroughs.
@@ -404,8 +419,12 @@ const Index = () => {
       </section>
 
       {/* DONATE CTA */}
-      <section className="py-20 md:py-28 bg-primary relative overflow-hidden">
+      <section className="py-20 md:py-28 bg-[#84a6ff] relative overflow-hidden">
         <div className="absolute inset-0 scratchy-overlay" />
+        <div className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-[#bcd2ff]/30" />
+        <div className="absolute right-0 top-4 h-32 w-32 rotate-45 bg-[#bcd2ff]/30" />
+        <div className="absolute left-[20%] bottom-2 h-28 w-28 rounded-full bg-[#bcd2ff]/30" />
+        <div className="absolute right-[18%] bottom-16 h-24 w-24 bg-[#bcd2ff]/30" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <ScrollReveal direction="scale">
@@ -419,7 +438,7 @@ const Index = () => {
             </p>
             <Link
               to="/get-involved"
-              className="inline-block px-10 py-5 bg-accent text-white font-heading font-bold text-xl uppercase tracking-wider hover:scale-105 hover:rotate-1 transition-all duration-200"
+              className="inline-block px-10 py-5 border-4 border-white bg-accent text-white font-heading font-bold text-xl uppercase tracking-wider hover:scale-105 hover:rotate-1 transition-all duration-200"
             >
               Give Now →
             </Link>

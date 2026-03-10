@@ -1,12 +1,21 @@
+import { blogPosts as defaultBlogPosts, type BlogPost } from "@/data/blogPosts";
 import type { Experience } from "@/data/experiences";
 import { mediaLibrary } from "@/data/mediaLibrary";
 import type { Partner } from "@/data/partners";
 import type { TeamSection } from "@/data/team";
 
+export type TennisLessonVideo = {
+  id: string;
+  title: string;
+  youtubeUrl: string;
+};
+
 export type EditableContentState = {
+  blogPosts: BlogPost[];
   experiences: Experience[];
   partners: Partner[];
   teamSections: TeamSection[];
+  tennisLessonVideos: TennisLessonVideo[];
 };
 
 export type PortableEditableContentState = EditableContentState;
@@ -24,6 +33,14 @@ const mediaSrcById = new Map(mediaLibrary.map((item) => [item.id, item.src]));
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const hasLegacyContentShape = (
+  value: unknown,
+): value is Omit<PortableEditableContentState, "blogPosts"> & { blogPosts?: BlogPost[] } =>
+  isPlainObject(value) &&
+  Array.isArray(value.experiences) &&
+  Array.isArray(value.partners) &&
+  Array.isArray(value.teamSections);
 
 const toPortableMediaValue = (value: string | undefined) => {
   if (!value) {
@@ -50,6 +67,10 @@ const fromPortableMediaValue = (value: string | undefined) => {
 export const serializeEditableContentState = (
   content: EditableContentState,
 ): PortableEditableContentState => ({
+  blogPosts: content.blogPosts.map((item) => ({
+    ...item,
+    image: item.image ? toPortableMediaValue(item.image) : item.image,
+  })),
   experiences: content.experiences.map((item) => ({
     ...item,
     image: toPortableMediaValue(item.image),
@@ -65,11 +86,18 @@ export const serializeEditableContentState = (
       image: toPortableMediaValue(person.image),
     })),
   })),
+  tennisLessonVideos: content.tennisLessonVideos.map((item) => ({
+    ...item,
+  })),
 });
 
 export const hydrateEditableContentState = (
   content: PortableEditableContentState,
 ): EditableContentState => ({
+  blogPosts: content.blogPosts.map((item) => ({
+    ...item,
+    image: item.image ? fromPortableMediaValue(item.image) : item.image,
+  })),
   experiences: content.experiences.map((item) => ({
     ...item,
     image: fromPortableMediaValue(item.image),
@@ -85,17 +113,23 @@ export const hydrateEditableContentState = (
       image: fromPortableMediaValue(person.image),
     })),
   })),
+  tennisLessonVideos: Array.isArray(content.tennisLessonVideos) ? content.tennisLessonVideos.map((item) => ({ ...item })) : [],
 });
 
 const hasContentShape = (value: unknown): value is PortableEditableContentState =>
-  isPlainObject(value) &&
-  Array.isArray(value.experiences) &&
-  Array.isArray(value.partners) &&
-  Array.isArray(value.teamSections);
+  hasLegacyContentShape(value) && Array.isArray(value.blogPosts);
 
 export const parseEditableContentImport = (input: unknown): EditableContentState => {
   if (hasContentShape(input)) {
     return hydrateEditableContentState(input);
+  }
+
+  if (hasLegacyContentShape(input)) {
+    return hydrateEditableContentState({
+      ...input,
+      blogPosts: defaultBlogPosts,
+      tennisLessonVideos: [],
+    });
   }
 
   if (
@@ -104,7 +138,20 @@ export const parseEditableContentImport = (input: unknown): EditableContentState
     typeof input.exportedAt === "string" &&
     hasContentShape(input.content)
   ) {
-    return hydrateEditableContentState(input.content);
+      return hydrateEditableContentState(input.content);
+  }
+
+  if (
+    isPlainObject(input) &&
+    input.version === 1 &&
+    typeof input.exportedAt === "string" &&
+    hasLegacyContentShape(input.content)
+  ) {
+    return hydrateEditableContentState({
+      ...input.content,
+      blogPosts: defaultBlogPosts,
+      tennisLessonVideos: [],
+    });
   }
 
   throw new Error("Invalid content file. Expected an editable content export JSON file.");

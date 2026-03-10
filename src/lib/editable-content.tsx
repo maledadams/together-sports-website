@@ -9,6 +9,7 @@ import {
   type SetStateAction,
 } from "react";
 import type { User } from "@supabase/supabase-js";
+import type { BlogPost } from "@/data/blogPosts";
 import type { Experience } from "@/data/experiences";
 import editableContentSeed from "@/data/editableContentSeed";
 import type { Partner } from "@/data/partners";
@@ -20,6 +21,7 @@ import {
   parseEditableContentImport,
   type EditableContentExportFile,
   type EditableContentState,
+  type TennisLessonVideo,
 } from "@/lib/editable-content-format";
 import {
   isSupabaseConfigured,
@@ -29,9 +31,11 @@ import {
 } from "@/lib/supabase";
 
 type EditableContentContextValue = EditableContentState & {
+  setBlogPosts: Dispatch<SetStateAction<BlogPost[]>>;
   setExperiences: Dispatch<SetStateAction<Experience[]>>;
   setPartners: Dispatch<SetStateAction<Partner[]>>;
   setTeamSections: Dispatch<SetStateAction<TeamSection[]>>;
+  setTennisLessonVideos: Dispatch<SetStateAction<TennisLessonVideo[]>>;
   resetAll: () => void;
   saveContent: () => Promise<void>;
   refreshContent: () => Promise<void>;
@@ -64,9 +68,11 @@ const defaultContent = createDefaultContent();
 const defaultSnapshot = createSerializedSnapshot(defaultContent);
 
 export const EditableContentProvider = ({ children }: { children: ReactNode }) => {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(() => defaultContent.blogPosts);
   const [experiences, setExperiences] = useState<Experience[]>(() => defaultContent.experiences);
   const [partners, setPartners] = useState<Partner[]>(() => defaultContent.partners);
   const [teamSections, setTeamSections] = useState<TeamSection[]>(() => defaultContent.teamSections);
+  const [tennisLessonVideos, setTennisLessonVideos] = useState<TennisLessonVideo[]>(() => defaultContent.tennisLessonVideos);
   const [lastSavedSnapshot, setLastSavedSnapshot] = useState(defaultSnapshot);
   const [isLoadingContent, setIsLoadingContent] = useState(isSupabaseConfigured);
   const [isSaving, setIsSaving] = useState(false);
@@ -74,9 +80,11 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
   const [user, setUser] = useState<User | null>(null);
 
   const applyContent = (next: EditableContentState) => {
+    setBlogPosts(next.blogPosts);
     setExperiences(next.experiences);
     setPartners(next.partners);
     setTeamSections(next.teamSections);
+    setTennisLessonVideos(next.tennisLessonVideos);
   };
 
   const readLiveContent = async () => {
@@ -168,19 +176,23 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
   }, []);
 
   const currentSnapshot = useMemo(
-    () => createSerializedSnapshot({ experiences, partners, teamSections }),
-    [experiences, partners, teamSections],
+    () => createSerializedSnapshot({ blogPosts, experiences, partners, teamSections, tennisLessonVideos }),
+    [blogPosts, experiences, partners, teamSections, tennisLessonVideos],
   );
   const hasUnsavedChanges = currentSnapshot !== lastSavedSnapshot;
 
   const value = useMemo<EditableContentContextValue>(
     () => ({
       experiences,
+      blogPosts,
+      setBlogPosts,
       partners,
       teamSections,
+      tennisLessonVideos,
       setExperiences,
       setPartners,
       setTeamSections,
+      setTennisLessonVideos,
       resetAll: () => {
         const defaults = createDefaultContent();
         applyContent(defaults);
@@ -198,7 +210,13 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
         setIsSaving(true);
 
         try {
-          const content = serializeEditableContentState({ experiences, partners, teamSections });
+          const content = serializeEditableContentState({
+            blogPosts,
+            experiences,
+            partners,
+            teamSections,
+            tennisLessonVideos,
+          });
           const { error } = await supabase.from("site_content").upsert(
             {
               id: SUPABASE_SITE_CONTENT_ID,
@@ -249,7 +267,8 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
         const { data: publicUrlData } = supabase.storage.from(SUPABASE_SITE_MEDIA_BUCKET).getPublicUrl(data.path);
         return publicUrlData.publicUrl;
       },
-      exportContent: () => createEditableContentExport({ experiences, partners, teamSections }),
+      exportContent: () =>
+        createEditableContentExport({ blogPosts, experiences, partners, teamSections, tennisLessonVideos }),
       importContent: (input) => {
         const next = parseEditableContentImport(input);
         applyContent(next);
@@ -288,9 +307,11 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
       },
     }),
     [
+      blogPosts,
       experiences,
       partners,
       teamSections,
+      tennisLessonVideos,
       currentSnapshot,
       hasUnsavedChanges,
       isLoadingContent,

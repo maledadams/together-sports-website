@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { blogPosts } from "@/data/blogPosts";
+import { useEditableContent } from "@/lib/editable-content";
 
 const formatDate = (value: string) =>
   new Date(value).toLocaleDateString("en-US", {
@@ -10,6 +10,7 @@ const formatDate = (value: string) =>
 
 const BlogPostPage = () => {
   const { slug } = useParams();
+  const { blogPosts } = useEditableContent();
   const post = blogPosts.find((entry) => entry.slug === slug);
 
   if (!post) {
@@ -43,7 +44,9 @@ const BlogPostPage = () => {
         </Link>
 
         <header className="mb-12">
-          <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Together Sports</p>
+          <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">
+            {post.tag?.trim() || "Together Sports"}
+          </p>
           <h1 className="font-heading text-5xl md:text-7xl font-black uppercase leading-[0.9] mb-6">{post.title}</h1>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-body uppercase tracking-[0.18em] text-muted-foreground">
             <span>{formatDate(post.publishedAt)}</span>

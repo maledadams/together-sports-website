@@ -1,78 +1,64 @@
-import { Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
+
+const getInvolvedItems = [
+  {
+    title: "Donate",
+    desc: "Fund equipment, coaching, transportation, and programs that open the door for more young athletes to play.",
+    cta: "Give Now",
+    icon: "💛",
+    href: "/contact",
+    external: false,
+  },
+  {
+    title: "Volunteer",
+    desc: "Coach, mentor, support sessions, or help organize community events that make every program run stronger.",
+    cta: "Sign Up",
+    icon: "🤝",
+    href: "https://docs.google.com/forms/d/e/1FAIpQLSes2__aGaa25i1By5o-fc_pBHDxSnjnaBDJGzHsDOaKR_FKDw/viewform?usp=publish-editor",
+    external: true,
+  },
+  {
+    title: "Partner",
+    desc: "Bring your school, organization, or business into the mission and help expand access through collaboration.",
+    cta: "Learn More",
+    icon: "🏢",
+    href: "https://docs.google.com/forms/d/e/1FAIpQLSePxWPnfSmEIF77mppapcF8fMcIhBC4uhE1c5EVux0dAK6pmA/viewform?usp=header",
+    external: true,
+  },
+];
 
 const GetInvolvedPage = () => {
   return (
     <div className="overflow-hidden">
-      {/* Ways to help */}
-      <section className="py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { title: "Donate", desc: "Fund equipment, coaches, and programs that change lives.", cta: "Give Now", icon: "💛" },
-              { title: "Volunteer", desc: "Coach, mentor, or help organize events in your community.", cta: "Sign Up", icon: "🤝" },
-              { title: "Partner", desc: "Corporate sponsors and local businesses — let's build together.", cta: "Learn More", icon: "🏢" },
-            ].map((item, i) => (
+      <section className="min-h-[calc(100vh+4rem)] md:min-h-[calc(100vh+6rem)] py-20 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-center">
+          <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 items-stretch">
+            {getInvolvedItems.map((item, i) => (
               <ScrollReveal key={item.title} delay={i * 0.15} direction="up">
-                <div className={`p-8 md:p-10 bg-card border border-border hover:border-accent transition-all duration-300 h-full flex flex-col ${i === 1 ? "md:-translate-y-6" : ""}`}>
-                  <span className="text-4xl mb-4 block">{item.icon}</span>
-                  <h3 className="font-heading text-3xl font-black uppercase mb-3">{item.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed mb-6 flex-1">{item.desc}</p>
-                  <a href="#" className="inline-block px-6 py-3 bg-accent text-white font-heading font-bold uppercase tracking-wider text-sm hover:scale-105 hover:rotate-1 transition-all duration-200 self-start">
+                <div
+                  className={`h-full min-h-[420px] md:min-h-[520px] p-10 md:p-12 bg-card border border-border hover:border-accent transition-all duration-300 flex flex-col ${
+                    i === 1 ? "md:-translate-y-8" : ""
+                  }`}
+                >
+                  <span className="mb-6 block text-5xl md:text-6xl">{item.icon}</span>
+                  <h3 className="mb-4 font-heading text-4xl md:text-5xl font-black uppercase leading-[0.95]">
+                    {item.title}
+                  </h3>
+                  <p className="mb-8 flex-1 text-xl md:text-2xl leading-relaxed text-muted-foreground">
+                    {item.desc}
+                  </p>
+                  <a
+                    href={item.href}
+                    target={item.external ? "_blank" : undefined}
+                    rel={item.external ? "noreferrer" : undefined}
+                    className="inline-block self-start px-8 py-4 bg-accent text-white font-heading font-bold uppercase tracking-wider text-base md:text-lg hover:scale-105 hover:rotate-1 transition-all duration-200"
+                  >
                     {item.cta} →
                   </a>
                 </div>
               </ScrollReveal>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Stripe placeholder */}
-      <section className="py-16 md:py-24 bg-card scratchy-overlay">
-        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <ScrollReveal direction="scale">
-            <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-4">
-              Make a <span className="brush-underline">Donation</span>
-            </h2>
-            <p className="text-muted-foreground mb-8">Secure payments powered by Stripe.</p>
-            <div className="p-8 bg-background border-2 border-dashed border-border">
-              <p className="text-muted-foreground font-body text-sm mb-4">Stripe Checkout Integration</p>
-              <div className="space-y-3">
-                {["$25", "$50", "$100", "$250"].map((amount) => (
-                  <button
-                    key={amount}
-                    className="w-full p-4 bg-card border border-border font-heading font-bold text-lg uppercase hover:border-accent hover:text-accent transition-colors"
-                  >
-                    {amount}
-                  </button>
-                ))}
-              </div>
-              <button className="w-full mt-4 p-4 bg-accent text-white font-heading font-bold text-lg uppercase hover:scale-[1.02] transition-all">
-                Donate →
-              </button>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <ScrollReveal>
-            <h2 className="font-heading text-4xl font-black uppercase mb-4">Stay in the <span className="text-accent">Loop</span></h2>
-            <p className="text-muted-foreground mb-6">Get updates on programs, events, and impact stories.</p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 p-4 bg-card border border-border text-foreground font-body placeholder:text-muted-foreground focus:border-accent focus:outline-none"
-              />
-              <button className="px-6 py-4 bg-primary text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all">
-                Join
-              </button>
-            </div>
-          </ScrollReveal>
         </div>
       </section>
     </div>

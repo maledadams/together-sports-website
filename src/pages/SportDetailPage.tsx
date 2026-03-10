@@ -1,40 +1,107 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
+import { useEditableContent } from "@/lib/editable-content";
+import { normalizeYouTubeEmbedUrl } from "@/lib/youtube";
 import tennisAction from "@/assets/tennis-action.jpg";
 import basketballAction from "@/assets/basketball-action.jpg";
 import footballAction from "@/assets/football-action.jpg";
 import golfAction from "@/assets/golf-action.jpg";
 import secondServe from "@/assets/second-serve.jpg";
 
-const sportData: Record<string, { name: string; image: string; tagline: string; description: string; schedule: string[] }> = {
+const sportData: Record<
+  string,
+  { name: string; image: string; tagline: string; description: string; schedule: string[] }
+> = {
   tennis: {
     name: "Tennis",
     image: tennisAction,
     tagline: "Every serve is a fresh start.",
-    description: "Our tennis program provides free coaching, equipment, and court time to youth aged 8-18. From beginners to competitive players, we build skills and confidence through structured lessons and match play.",
-    schedule: ["Monday & Wednesday: 4:00–6:00 PM", "Saturday: 9:00 AM–12:00 PM", "Summer Intensive: June–August"],
+    description:
+      "Our tennis program provides free coaching, equipment, and court time to youth aged 8-18. From beginners to competitive players, we build skills and confidence through structured lessons and match play.",
+    schedule: ["Monday & Wednesday: 4:00-6:00 PM", "Saturday: 9:00 AM-12:00 PM", "Summer Intensive: June-August"],
   },
   basketball: {
     name: "Basketball",
     image: basketballAction,
     tagline: "The court is where leaders are made.",
-    description: "Our basketball program teaches fundamentals, teamwork, and game strategy. Open to all skill levels, we focus on building confidence through competitive play and mentorship.",
-    schedule: ["Tuesday & Thursday: 4:00–6:00 PM", "Saturday: 1:00–4:00 PM"],
+    description:
+      "Our basketball program teaches fundamentals, teamwork, and game strategy. Open to all skill levels, we focus on building confidence through competitive play and mentorship.",
+    schedule: ["Tuesday & Thursday: 4:00-6:00 PM", "Saturday: 1:00-4:00 PM"],
   },
   football: {
     name: "Football",
     image: footballAction,
     tagline: "Every play counts. Every player matters.",
-    description: "Our football program emphasizes discipline, teamwork, and sportsmanship. We provide equipment and coaching for flag and tackle football across multiple age groups.",
-    schedule: ["Monday & Wednesday: 4:30–6:30 PM", "Saturday: 10:00 AM–1:00 PM"],
+    description:
+      "Our football program emphasizes discipline, teamwork, and sportsmanship. We provide equipment and coaching for flag and tackle football across multiple age groups.",
+    schedule: ["Monday & Wednesday: 4:30-6:30 PM", "Saturday: 10:00 AM-1:00 PM"],
   },
   golf: {
     name: "Golf",
     image: golfAction,
     tagline: "The long game starts here.",
-    description: "Our golf program introduces youth to the sport of patience and precision. With access to courses and professional instruction, we open doors that many thought were closed.",
-    schedule: ["Wednesday: 3:30–5:30 PM", "Saturday: 8:00–11:00 AM"],
+    description:
+      "Our golf program introduces youth to the sport of patience and precision. With access to courses and professional instruction, we open doors that many thought were closed.",
+    schedule: ["Wednesday: 3:30-5:30 PM", "Saturday: 8:00-11:00 AM"],
+  },
+};
+
+const sportTheme: Record<
+  string,
+  {
+    heroBackground: string;
+    accentText: string;
+    shapeClassNames: string[];
+  }
+> = {
+  tennis: {
+    heroBackground: "bg-[hsl(var(--sport-tennis))]",
+    accentText: "text-accent",
+    shapeClassNames: [
+      "absolute left-6 top-10 h-12 w-12 rounded-full bg-white/12 md:left-10 md:h-20 md:w-20",
+      "absolute left-[18%] top-8 h-8 w-8 bg-white/10 scrapbook-rotate-1 md:h-14 md:w-14",
+      "absolute right-8 top-12 h-10 w-10 rotate-45 bg-white/12 md:right-12 md:h-16 md:w-16",
+      "absolute right-[16%] bottom-12 h-14 w-14 rounded-full bg-white/10 md:h-24 md:w-24",
+      "absolute right-[28%] top-[42%] h-6 w-6 rounded-full bg-white/10 md:h-10 md:w-10",
+      "absolute left-[12%] bottom-10 h-10 w-10 rounded-full bg-white/10 md:h-16 md:w-16",
+    ],
+  },
+  basketball: {
+    heroBackground: "bg-[hsl(var(--sport-basketball))]",
+    accentText: "text-[hsl(var(--sport-basketball))]",
+    shapeClassNames: [
+      "absolute left-8 top-10 h-14 w-14 rounded-full bg-white/12 md:h-24 md:w-24",
+      "absolute left-[18%] top-8 h-10 w-10 rotate-12 bg-white/10 md:h-14 md:w-14",
+      "absolute right-10 top-12 h-12 w-12 rotate-45 bg-white/12 md:h-24 md:w-24",
+      "absolute right-[22%] bottom-10 h-8 w-8 rounded-full bg-white/10 md:h-12 md:w-12",
+      "absolute right-[32%] top-[40%] h-6 w-6 bg-white/10 scrapbook-rotate-2 md:h-10 md:w-10",
+      "absolute left-[12%] bottom-8 h-9 w-9 rounded-full bg-white/10 md:h-14 md:w-14",
+    ],
+  },
+  football: {
+    heroBackground: "bg-[hsl(var(--sport-football))]",
+    accentText: "text-[hsl(var(--sport-football))]",
+    shapeClassNames: [
+      "absolute left-10 top-10 h-12 w-12 rounded-full bg-white/14 md:h-20 md:w-20",
+      "absolute left-[26%] top-7 h-10 w-10 bg-white/10 scrapbook-rotate-2 md:h-14 md:w-14",
+      "absolute right-10 top-14 h-14 w-14 rotate-45 bg-white/12 md:h-20 md:w-20",
+      "absolute right-[20%] bottom-12 h-8 w-8 rounded-full bg-white/12 md:h-12 md:w-12",
+      "absolute right-[30%] top-[42%] h-7 w-7 rounded-full bg-white/10 md:h-11 md:w-11",
+      "absolute left-[14%] bottom-10 h-10 w-10 rounded-full bg-white/10 md:h-14 md:w-14",
+    ],
+  },
+  golf: {
+    heroBackground: "bg-[hsl(var(--sport-golf))]",
+    accentText: "text-[hsl(var(--sport-golf))]",
+    shapeClassNames: [
+      "absolute left-8 top-12 h-12 w-12 rounded-full bg-white/12 md:h-24 md:w-24",
+      "absolute left-[21%] top-9 h-9 w-9 bg-white/10 scrapbook-rotate-3 md:h-14 md:w-14",
+      "absolute right-12 top-10 h-12 w-12 rotate-45 bg-white/12 md:h-24 md:w-24",
+      "absolute right-[18%] bottom-8 h-8 w-8 rounded-full bg-white/10 md:h-12 md:w-12",
+      "absolute right-[28%] top-[44%] h-6 w-6 bg-white/10 scrapbook-rotate-1 md:h-10 md:w-10",
+      "absolute left-[16%] bottom-9 h-9 w-9 rounded-full bg-white/10 md:h-14 md:w-14",
+    ],
   },
 };
 
@@ -81,7 +148,7 @@ const formatClockTime = (time24?: string) => {
 const fetchUstaSessionsDirect = async (signal: AbortSignal): Promise<TennisSession[]> => {
   const filtersResponse = await fetch(
     "https://playtennis.usta.com/togethertennis/Coaching/GetSearchFilters?subCategory=GroupCoaching",
-    { signal }
+    { signal },
   );
 
   if (!filtersResponse.ok) {
@@ -110,7 +177,7 @@ const fetchUstaSessionsDirect = async (signal: AbortSignal): Promise<TennisSessi
         filters: filtersData.filters.background,
       }),
       signal,
-    }
+    },
   );
 
   if (!searchResponse.ok) {
@@ -140,6 +207,7 @@ const fetchUstaSessionsDirect = async (signal: AbortSignal): Promise<TennisSessi
 
 const SportDetailPage = () => {
   const { sport } = useParams<{ sport: string }>();
+  const { tennisLessonVideos } = useEditableContent();
   const data = sportData[sport || ""];
   const [tennisSessions, setTennisSessions] = useState<TennisSession[]>([]);
   const [sessionsLoading, setSessionsLoading] = useState(false);
@@ -149,12 +217,23 @@ const SportDetailPage = () => {
     return (
       <div className="py-32 text-center">
         <h1 className="font-heading text-4xl font-black uppercase">Sport not found</h1>
-        <Link to="/sports" className="text-accent mt-4 inline-block">← Back to Sports</Link>
+        <Link to="/" className="mt-4 inline-block text-accent">
+          Back to Home
+        </Link>
       </div>
     );
   }
 
   const isTennis = sport === "tennis";
+  const theme = sportTheme[sport || "tennis"] ?? sportTheme.tennis;
+  const aboutAccentClass = isTennis ? "brush-underline" : theme.accentText;
+  const validTennisLessonVideos = tennisLessonVideos
+    .map((video) => ({
+      ...video,
+      youtubeUrl: normalizeYouTubeEmbedUrl(video.youtubeUrl) || "",
+    }))
+    .filter((video) => video.youtubeUrl)
+    .slice(0, 2);
 
   useEffect(() => {
     if (!isTennis) {
@@ -190,7 +269,7 @@ const SportDetailPage = () => {
 
         const directSessions = await fetchUstaSessionsDirect(abortController.signal);
         setTennisSessions(directSessions);
-      } catch (error) {
+      } catch {
         if (!abortController.signal.aborted) {
           setSessionsError("Live USTA sessions are unavailable right now.");
         }
@@ -210,75 +289,90 @@ const SportDetailPage = () => {
 
   return (
     <div className="overflow-hidden">
-      {/* Hero */}
-      <section className="relative h-[60vh] min-h-[400px] flex items-end">
-        <img src={data.image} alt={data.name} className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-deep-blue via-deep-blue/50 to-transparent" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 w-full">
-          <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-3">Together Sports</p>
-          <h1 className="font-heading text-6xl md:text-8xl font-black uppercase text-white">{data.name}</h1>
-          <p className="text-xl text-white/70 mt-2">{data.tagline}</p>
+      <section className={`relative overflow-hidden ${theme.heroBackground}`}>
+        {theme.shapeClassNames.map((shapeClassName, index) => (
+          <div key={`${sport}-shape-${index}`} className={shapeClassName} />
+        ))}
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8 md:pt-28 md:pb-24">
+          <div className="max-w-3xl">
+            <h1 className="mb-4 font-heading text-5xl font-black uppercase leading-[0.95] text-white md:text-7xl">
+              {data.name}
+            </h1>
+            <p className="max-w-2xl font-body text-lg text-white md:text-xl">{data.tagline}</p>
+          </div>
         </div>
       </section>
 
-      {/* About */}
       <section className="py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-6">
-              About the <span className="brush-underline">Program</span>
+            <h2 className="mb-6 font-heading text-4xl font-black uppercase md:text-5xl">
+              About the <span className={aboutAccentClass}>Program</span>
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed">{data.description}</p>
+            <p className="text-lg leading-relaxed text-muted-foreground">{data.description}</p>
           </ScrollReveal>
         </div>
       </section>
 
-      {isTennis && (
+      {isTennis ? (
         <>
-      {/* How Lessons Work */}
-      <section className="py-16 md:py-24 bg-card scratchy-overlay">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-8">
-              How Lessons <span className="text-accent">Work</span>
-            </h2>
-            <div className="aspect-video bg-background border border-border flex items-center justify-center mb-8">
-              <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-accent/20 rounded-full flex items-center justify-center">
-                  <span className="text-accent text-2xl">▶</span>
-                </div>
-                <p className="text-muted-foreground">Video coming soon</p>
+          {validTennisLessonVideos.length > 0 ? (
+            <section className="bg-card py-16 md:py-24 scratchy-overlay">
+              <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                <ScrollReveal>
+                  <h2 className="mb-8 font-heading text-4xl font-black uppercase md:text-5xl">
+                    How Lessons <span className="text-accent">Work</span>
+                  </h2>
+                  <div className={`grid gap-8 ${validTennisLessonVideos.length > 1 ? "md:grid-cols-2" : ""}`}>
+                    {validTennisLessonVideos.map((video) => (
+                      <div key={video.id} className="overflow-hidden border border-border bg-background">
+                        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                          <iframe
+                            src={video.youtubeUrl}
+                            title={video.title || "How tennis lessons work"}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="absolute inset-0 h-full w-full"
+                            loading="lazy"
+                          />
+                        </div>
+                        {video.title ? (
+                          <div className="p-4">
+                            <p className="font-heading text-xl font-black uppercase">{video.title}</p>
+                          </div>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollReveal>
               </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+            </section>
+          ) : null}
 
-          {/* Live Tennis Sessions */}
           <section className="py-16 md:py-24">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
               <ScrollReveal>
-                <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-8">
+                <h2 className="mb-8 font-heading text-4xl font-black uppercase md:text-5xl">
                   Live <span className="brush-underline">USTA Sessions</span>
                 </h2>
-                <p className="text-muted-foreground text-lg leading-relaxed mb-10">
+                <p className="mb-10 text-lg leading-relaxed text-muted-foreground">
                   Discover our range of tennis programs designed for all skill levels, from beginner to advanced. Join
                   us for group sessions, fun community events, and the joy of learning tennis in a supportive
                   environment. Private lessons are also available, please contact us directly to arrange.
                 </p>
 
                 {sessionsLoading ? (
-                  <div className="p-6 bg-card border border-border text-foreground font-body text-lg">
+                  <div className="border border-border bg-card p-6 font-body text-lg text-foreground">
                     Loading live USTA sessions...
                   </div>
                 ) : sessionsError ? (
                   <div className="space-y-4">
-                    <div className="p-6 bg-card border border-border text-foreground font-body text-lg">
+                    <div className="border border-border bg-card p-6 font-body text-lg text-foreground">
                       {sessionsError}
                     </div>
                     <a
                       href="https://playtennis.usta.com/togethertennis/Coaching"
-                      className="inline-block px-8 py-4 bg-primary text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200"
+                      className="inline-block bg-primary px-8 py-4 font-heading font-bold uppercase tracking-wider text-white transition-all duration-200 hover:scale-105"
                     >
                       View USTA Page
                     </a>
@@ -293,35 +387,37 @@ const SportDetailPage = () => {
                       >
                         <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                           <div>
-                            <h3 className="font-heading text-3xl md:text-4xl font-black uppercase text-foreground mb-2">
+                            <h3 className="mb-2 font-heading text-3xl font-black uppercase text-foreground md:text-4xl">
                               {session.name}
                             </h3>
-                            <p className="text-foreground text-lg md:text-xl">{session.nextSessionLabel}</p>
+                            <p className="text-lg text-foreground md:text-xl">{session.nextSessionLabel}</p>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-foreground">
+                          <div className="grid grid-cols-1 gap-x-8 gap-y-4 text-foreground sm:grid-cols-2">
                             <div>
-                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Location</p>
+                              <p className="mb-1 font-body text-xs font-bold uppercase tracking-[0.16em]">Location</p>
                               <p className="text-lg">{session.locationName}</p>
                             </div>
                             <div>
-                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Coach</p>
+                              <p className="mb-1 font-body text-xs font-bold uppercase tracking-[0.16em]">Coach</p>
                               <p className="text-lg">{session.coachName}</p>
                             </div>
                             <div>
-                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Level</p>
+                              <p className="mb-1 font-body text-xs font-bold uppercase tracking-[0.16em]">Level</p>
                               <p className="text-lg">{session.levelLabel}</p>
                             </div>
                             <div>
-                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Next Session</p>
+                              <p className="mb-1 font-body text-xs font-bold uppercase tracking-[0.16em]">
+                                Next Session
+                              </p>
                               <p className="text-lg">{session.nextSessionLabel}</p>
                             </div>
                             <div>
-                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Date</p>
+                              <p className="mb-1 font-body text-xs font-bold uppercase tracking-[0.16em]">Date</p>
                               <p className="text-lg">{session.dateLabel}</p>
                             </div>
                             <div>
-                              <p className="font-body font-bold uppercase tracking-[0.16em] text-xs mb-1">Time</p>
+                              <p className="mb-1 font-body text-xs font-bold uppercase tracking-[0.16em]">Time</p>
                               <p className="text-lg">{session.timeLabel}</p>
                             </div>
                           </div>
@@ -333,33 +429,40 @@ const SportDetailPage = () => {
               </ScrollReveal>
             </div>
           </section>
-
         </>
-      )}
+      ) : null}
 
-      {/* Registration */}
-      <section className="py-16 md:py-24 bg-card scratchy-overlay">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="bg-card py-16 md:py-24 scratchy-overlay">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <ScrollReveal direction="scale">
-            <h2 className="font-heading text-4xl md:text-5xl font-black uppercase mb-4">
+            <h2 className="mb-4 font-heading text-4xl font-black uppercase md:text-5xl">
               Ready to <span className="text-accent">{isTennis ? "Register?" : "Enter the Waitlist?"}</span>
             </h2>
-            <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto">
+            <p className="mx-auto mb-8 max-w-md text-lg text-muted-foreground">
               {isTennis
                 ? "Sign up through USTA or contact us directly to join the program."
                 : "Join the waitlist and we will reach out as soon as space opens up for this sport."}
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex flex-wrap justify-center gap-4">
               {isTennis ? (
-                <a href="#" className="inline-block px-8 py-4 bg-primary text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200">
+                <a
+                  href="https://playtennis.usta.com/togethertennis/Coaching"
+                  className="inline-block bg-primary px-8 py-4 font-heading font-bold uppercase tracking-wider text-white transition-all duration-200 hover:scale-105"
+                >
                   USTA Registration →
                 </a>
               ) : (
-                <Link to="/contact" className="inline-block px-8 py-4 bg-primary text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200">
+                <Link
+                  to="/contact"
+                  className="inline-block bg-primary px-8 py-4 font-heading font-bold uppercase tracking-wider text-white transition-all duration-200 hover:scale-105"
+                >
                   Join Waitlist →
                 </Link>
               )}
-              <Link to="/contact" className="inline-block px-8 py-4 bg-accent text-white font-heading font-bold uppercase tracking-wider hover:scale-105 transition-all duration-200">
+              <Link
+                to="/contact"
+                className="inline-block bg-accent px-8 py-4 font-heading font-bold uppercase tracking-wider text-white transition-all duration-200 hover:scale-105"
+              >
                 Contact Us
               </Link>
             </div>
@@ -367,38 +470,42 @@ const SportDetailPage = () => {
         </div>
       </section>
 
-      {/* Second Serve (Tennis only) */}
-      {isTennis && (
-        <section className="py-20 md:py-28 relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {isTennis ? (
+        <section className="relative py-20 md:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
               <ScrollReveal direction="left">
                 <div className="scrapbook-rotate-1">
-                  <img src={secondServe} alt="Second Serve" className="w-full h-[400px] object-cover" />
+                  <img src={secondServe} alt="Second Serve" className="h-[400px] w-full object-cover" />
                 </div>
               </ScrollReveal>
               <ScrollReveal direction="right">
-                <p className="font-body font-bold uppercase tracking-[0.2em] text-accent text-sm mb-4">Partner Service + Initiative</p>
-                <h2 className="font-heading text-5xl md:text-6xl font-black uppercase leading-[0.9] mb-6">
+                <p className="mb-4 font-body text-sm font-bold uppercase tracking-[0.2em] text-accent">
+                  Partner Service + Initiative
+                </p>
+                <h2 className="mb-6 font-heading text-5xl font-black uppercase leading-[0.9] md:text-6xl">
                   Second Serve
                 </h2>
-                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                <p className="mb-6 text-lg leading-relaxed text-muted-foreground">
                   Second Serve is a service from our partner Second Serve. Alongside that partnership, Together Tennis
                   is building its own Second Serve effort focused on collecting quality used tennis equipment that
                   people would otherwise throw away and donating it back into the community.
                 </p>
-                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                <p className="mb-6 text-lg leading-relaxed text-muted-foreground">
                   The goal is simple: keep rackets, bags, balls, and gear in circulation so more kids can play with
                   what they need instead of being priced out of the sport.
                 </p>
-                <Link to="/get-involved" className="inline-block px-8 py-4 bg-accent text-white font-heading font-bold uppercase tracking-wider hover:scale-105 hover:rotate-1 transition-all duration-200">
+                <Link
+                  to="/get-involved"
+                  className="inline-block bg-accent px-8 py-4 font-heading font-bold uppercase tracking-wider text-white transition-all duration-200 hover:scale-105 hover:rotate-1"
+                >
                   Support Second Serve
                 </Link>
               </ScrollReveal>
             </div>
           </div>
         </section>
-      )}
+      ) : null}
     </div>
   );
 };

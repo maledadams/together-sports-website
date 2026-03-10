@@ -1,6 +1,21 @@
 import type { PortableEditableContentState } from "@/lib/editable-content-format";
 
 const editableContentSeed: PortableEditableContentState = {
+  "blogPosts": [
+    {
+      "id": "blog-test",
+      "title": "test",
+      "slug": "test",
+      "excerpt": "test",
+      "publishedAt": "Fri, 06 Mar 2026 21:01:19 GMT",
+      "author": "Together Sports",
+      "sourceUrl": "https://togethersports.substack.com/p/test",
+      "image": "https://substackcdn.com/image/fetch/$s_!Ax51!,w_256,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F598a2bd9-401a-4fba-8b63-94a3c80513c5_144x144.png",
+      "contentHtml": "<p>testestetztstetteetsetsstest</p>",
+      "featured": true,
+      "tag": ""
+    }
+  ],
   "experiences": [
     {
       "id": "quote-1",
@@ -8,7 +23,8 @@ const editableContentSeed: PortableEditableContentState = {
       "sport": "Tennis",
       "quote": "My 4-year-old had her first tennis lesson with Coach Harry, and it could not have gone better. He met her where she was, encouraging, kind, and full of energy. Together Tennis makes tennis feel welcoming for families at every level.",
       "name": "Leigh H.",
-      "age": "Parent"
+      "age": "Parent",
+      "rating": 5
     },
     {
       "id": "quote-2",
@@ -16,7 +32,8 @@ const editableContentSeed: PortableEditableContentState = {
       "sport": "Tennis",
       "quote": "Zoe had a great experience practicing tennis with Harry. He did an excellent job teaching her techniques to improve her game. I would highly recommend Harry to any students who are looking to become better tennis players.",
       "name": "Michael B.",
-      "age": "Parent"
+      "age": "Parent",
+      "rating": 5
     },
     {
       "id": "quote-3",
@@ -24,14 +41,16 @@ const editableContentSeed: PortableEditableContentState = {
       "sport": "Tennis",
       "quote": "Theo has always been quite shy, especially in new environments where he would normally stay close to me. Seeing him open up with you has been truly special, thank you for helping him come out of his shell!",
       "name": "Rachel L.",
-      "age": "Parent"
+      "age": "Parent",
+      "rating": 5
     },
     {
       "id": "parent-1",
       "type": "parent",
       "sport": "Basketball",
       "quote": "We have seen so much confidence grow through the program. The coaches make the environment feel positive, focused, and welcoming for families.",
-      "name": "Parent Name"
+      "name": "Parent Name",
+      "rating": 5
     },
     {
       "id": "photo-1",
@@ -94,7 +113,7 @@ const editableContentSeed: PortableEditableContentState = {
     {
       "id": "founder",
       "title": "Founder",
-      "color": "#4f74d6",
+      "color": "#87cb4a",
       "people": [
         {
           "id": "founder-1",
@@ -109,7 +128,7 @@ const editableContentSeed: PortableEditableContentState = {
     {
       "id": "staff",
       "title": "Staff",
-      "color": "#87cb4a",
+      "color": "#4f74d6",
       "people": [
         {
           "id": "staff-1",
@@ -168,7 +187,8 @@ const editableContentSeed: PortableEditableContentState = {
         }
       ]
     }
-  ]
+  ],
+  "tennisLessonVideos": []
 };
 
 export default editableContentSeed;

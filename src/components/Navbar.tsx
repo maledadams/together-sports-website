@@ -1,22 +1,30 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import headerLogo from "@/assets/headerlogo.svg";
 
 const navItems = [
-  { label: "Home", path: "/" },
+  {
+    label: "Home",
+    path: "/",
+    dropdown: [
+      { label: "Tennis", path: "/sports/tennis", color: "#87cb4a" },
+      { label: "Basketball", path: "/sports/basketball", color: "#f6a15c" },
+      { label: "Football", path: "/sports/football", color: "#84a6ff" },
+      { label: "Golf", path: "/sports/golf", color: "#ab9bfa" },
+    ],
+  },
   { label: "Team", path: "/team" },
   { label: "Experiences", path: "/experiences" },
   { label: "Blog", path: "/blog" },
-  { label: "Get Involved", path: "/get-involved" },
-  { label: "Partners", path: "/partners" },
   { label: "Contact", path: "/contact" },
+  { label: "Partners", path: "/partners" },
 ];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary border-b border-primary/80">
@@ -34,16 +42,54 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex flex-1 items-center justify-end gap-1 min-w-0">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="px-3 py-2 text-sm font-body font-semibold uppercase tracking-wider text-[#ffffff] transition-colors duration-200 hover:text-[#84a6ff]"
-              >
-                {item.label}
-              </Link>
-            ))}
+          <div className="hidden lg:flex flex-1 items-center justify-end gap-2 min-w-0">
+            <div className="flex items-center gap-1 min-w-0">
+              {navItems.map((item) => (
+                <div
+                  key={item.path}
+                  className="relative"
+                  onMouseEnter={() => setOpenDropdown(item.dropdown ? item.path : null)}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  <Link
+                    to={item.path}
+                    className="px-3 py-2 text-sm font-[Montserrat] font-bold uppercase tracking-wider text-[#ffffff] transition-colors duration-200 hover:text-[#84a6ff]"
+                  >
+                    {item.label}
+                  </Link>
+                  <AnimatePresence>
+                    {item.dropdown && openDropdown === item.path ? (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                        transition={{ duration: 0.18, ease: "easeOut" }}
+                        className="absolute left-0 top-full mt-7 hidden w-56 border-2 border-primary bg-white shadow-lg lg:block"
+                      >
+                        <div className="p-2 text-left">
+                          {item.dropdown.map((subItem) => (
+                            <Link
+                              key={subItem.path}
+                              to={subItem.path}
+                              className="block px-4 py-3 text-sm font-[Montserrat] font-bold uppercase tracking-wider transition-colors duration-200 hover:bg-primary/5"
+                              style={{ color: subItem.color ?? "#4f74d6" }}
+                            >
+                              {subItem.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
+            <Link
+              to="/get-involved"
+              className="ml-4 inline-flex shrink-0 items-center justify-center rounded-sm bg-[#ffffff] px-5 py-3 text-sm font-[Montserrat] font-bold uppercase tracking-wider text-primary transition-transform duration-200 hover:scale-105"
+            >
+              Get Involved
+            </Link>
           </div>
 
           {/* Mobile toggle */}
@@ -71,11 +117,18 @@ const Navbar = () => {
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 font-heading font-bold text-lg uppercase tracking-wider text-[#ffffff] transition-colors hover:text-[#84a6ff]"
+                  className="block px-4 py-3 text-lg font-[Montserrat] font-bold uppercase tracking-wider text-[#ffffff] transition-colors hover:text-[#84a6ff]"
                 >
                   {item.label}
                 </Link>
               ))}
+              <Link
+                to="/get-involved"
+                onClick={() => setIsOpen(false)}
+                className="block px-4 py-3 text-lg font-[Montserrat] font-bold uppercase tracking-wider bg-[#ffffff] text-primary"
+              >
+                Get Involved
+              </Link>
             </div>
           </motion.div>
         )}

@@ -1,0 +1,23 @@
+{
+  "name": "Together Sports",
+  "short_name": "Together Sports",
+  "description": "Together Sports empowers youth through free sports programs, mentorship, and community building.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#020367",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

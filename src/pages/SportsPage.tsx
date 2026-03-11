@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
-import togetherTennis from "@/assets/TogetherTennis.png";
-import togetherBasketball from "@/assets/TogetherBB.png";
-import togetherFootball from "@/assets/TogetherFB.png";
-import togetherGolf from "@/assets/TogetherGolf.png";
+import togetherTennis from "@/assets/TogetherTennis.webp";
+import togetherBasketball from "@/assets/TogetherBB.webp";
+import togetherFootball from "@/assets/TogetherFB.webp";
+import togetherGolf from "@/assets/TogetherGolf.webp";
 
 const sports = [
   { name: "Together Tennis", image: togetherTennis, path: "/sports/tennis" },
@@ -50,6 +50,8 @@ const SportsPage = () => {
                   <img
                     src={sport.image}
                     alt={sport.name}
+                    loading="eager"
+                    decoding="async"
                     className="w-full max-w-[18rem] md:max-w-[22rem] h-auto object-contain transition-transform duration-300 group-hover:scale-[1.04]"
                   />
                 </Link>

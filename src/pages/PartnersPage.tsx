@@ -44,7 +44,9 @@ const PartnersPage = () => {
                     <img
                       src={partner.logo}
                       alt={partner.name}
-                      loading="eager"
+                      loading={groupIndex === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                      fetchPriority={groupIndex === 0 ? "high" : "low"}
                       className="max-w-full max-h-full object-contain"
                     />
                   </a>

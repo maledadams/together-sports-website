@@ -1,7 +1,7 @@
 import partner1 from "@/assets/partner-1.png";
 import partner2 from "@/assets/partner-2.png";
 import partner3 from "@/assets/partner-3.png";
-import partner4 from "@/assets/partner-4.png";
+import partner4 from "@/assets/partner-4.webp";
 
 export type Partner = {
   id: string;

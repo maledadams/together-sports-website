@@ -165,7 +165,13 @@ const ContactPage = () => {
 
             <ScrollReveal direction="right">
               <div className="h-full min-h-[260px] flex items-center justify-center p-6 sm:min-h-[320px] md:min-h-[390px] md:p-10">
-                <img src={contactLogo} alt="Together Sports logo" className="w-full max-w-md h-auto object-contain" />
+                <img
+                  src={contactLogo}
+                  alt="Together Sports logo"
+                  loading="eager"
+                  decoding="async"
+                  className="w-full max-w-md h-auto object-contain"
+                />
               </div>
             </ScrollReveal>
           </div>

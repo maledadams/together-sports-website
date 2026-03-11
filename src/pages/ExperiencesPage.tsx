@@ -48,6 +48,7 @@ const PhotoCard = ({ item, index }: { item: Experience; index: number }) => {
           alt={item.caption || "Experience photo"}
           className="w-full h-[300px] md:h-[350px] object-cover"
           loading="lazy"
+          decoding="async"
         />
         {item.caption ? (
           <p className="mt-3 text-muted-foreground text-sm font-body italic">

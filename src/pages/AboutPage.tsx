@@ -83,6 +83,8 @@ const TeamCard = ({
       <img
         src={person.image}
         alt={person.alt}
+        loading="lazy"
+        decoding="async"
         className={`w-full object-cover ${isFounder ? "h-[320px] md:h-[400px]" : "h-[320px] md:h-[310px]"}`}
       />
       <div className={`flex flex-1 flex-col ${isFounder ? "p-7 md:p-9" : "p-7 md:p-7"}`}>

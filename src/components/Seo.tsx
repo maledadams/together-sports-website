@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import embedImage from "@/assets/SPORTSTOGETHERHANDLOGO.png";
 import { useEditableContent } from "@/lib/editable-content";
 
 type MetaConfig = {
@@ -163,7 +162,8 @@ const Seo = () => {
     const { pathname, search } = location;
     const origin = window.location.origin;
     const currentUrl = `${origin}${pathname}${search}`;
-    const imageUrl = new URL(embedImage, origin).toString();
+    const imageUrl = new URL("/EMBEDPIC.png", origin).toString();
+    const logoUrl = new URL("/favicon.png", origin).toString();
     const meta = getMetaForPath(pathname, blogPosts);
 
     document.title = meta.title;
@@ -176,24 +176,71 @@ const Seo = () => {
     setMetaContent("og:site_name", SITE_NAME, "property");
     setMetaContent("og:url", currentUrl, "property");
     setMetaContent("og:image", imageUrl, "property");
-    setMetaContent("og:image:alt", "Together Sports logo", "property");
+    setMetaContent("og:image:alt", "Together Sports social preview", "property");
+    setMetaContent("og:image:width", "1920", "property");
+    setMetaContent("og:image:height", "1080", "property");
     setMetaContent("twitter:card", "summary_large_image");
     setMetaContent("twitter:title", meta.title);
     setMetaContent("twitter:description", meta.description);
     setMetaContent("twitter:image", imageUrl);
     setLinkHref("canonical", currentUrl);
-    setLinkHref("icon", new URL("/src/assets/headerlogo.svg", origin).toString());
+    setLinkHref("icon", new URL("/favicon.svg?v=3", origin).toString());
+    setLinkHref("shortcut icon", new URL("/favicon.ico?v=3", origin).toString());
     setLinkHref("apple-touch-icon", imageUrl);
 
-    const schema = {
+    const organizationSchema = {
       "@context": "https://schema.org",
       "@type": "Organization",
       name: SITE_NAME,
       url: origin,
-      logo: imageUrl,
+      logo: logoUrl,
       image: imageUrl,
       sameAs: socialLinks,
       description: DEFAULT_DESCRIPTION,
+    };
+
+    const websiteSchema = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: origin,
+      description: DEFAULT_DESCRIPTION,
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        logo: {
+          "@type": "ImageObject",
+          url: logoUrl,
+        },
+      },
+      hasPart: [
+        `${origin}/sports`,
+        `${origin}/team`,
+        `${origin}/experiences`,
+        `${origin}/blog`,
+        `${origin}/partners`,
+        `${origin}/contact`,
+      ].map((url) => ({
+        "@type": "WebPage",
+        url,
+      })),
+    };
+
+    const pageSchema = {
+      "@context": "https://schema.org",
+      "@type": pathname === "/" ? "WebPage" : pathname.startsWith("/blog/") ? "Article" : "CollectionPage",
+      name: meta.title,
+      url: currentUrl,
+      description: meta.description,
+      isPartOf: {
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: origin,
+      },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: imageUrl,
+      },
     };
 
     let script = document.head.querySelector<HTMLScriptElement>('script[data-seo="organization"]');
@@ -203,7 +250,7 @@ const Seo = () => {
       script.dataset.seo = "organization";
       document.head.appendChild(script);
     }
-    script.textContent = JSON.stringify(schema);
+    script.textContent = JSON.stringify([organizationSchema, websiteSchema, pageSchema]);
   }, [location, blogPosts]);
 
   return null;

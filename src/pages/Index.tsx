@@ -161,6 +161,9 @@ const Index = () => {
                 <img
                   src={image0903}
                   alt="Together Sports action moment"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                   className="block w-full h-full object-cover"
                 />
               </div>
@@ -168,6 +171,9 @@ const Index = () => {
                 <img
                   src={heroImage}
                   alt="Together Sports community moment"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                   className="block w-full h-full object-cover"
                 />
               </div>
@@ -175,6 +181,9 @@ const Index = () => {
                 <img
                   src={image3782}
                   alt="Together Sports team moment"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                   className="block w-full h-full object-cover"
                 />
               </div>
@@ -207,7 +216,13 @@ const Index = () => {
 
             <ScrollReveal direction="left">
               <div className="scrapbook-rotate-2">
-                <img src={communityImg} alt="Together Sports community" className="w-full h-[340px] md:h-[420px] object-cover" />
+                <img
+                  src={communityImg}
+                  alt="Together Sports community"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-[340px] md:h-[420px] object-cover"
+                />
               </div>
             </ScrollReveal>
           </div>
@@ -273,6 +288,7 @@ const Index = () => {
               src={item.image}
               alt=""
               aria-hidden="true"
+              decoding="async"
               className="block w-full h-auto"
               initial={{ rotate: 0, scaleX: item.scaleX }}
               animate={{ rotate: item.rotate, scaleX: item.scaleX }}
@@ -395,6 +411,8 @@ const Index = () => {
                   <img
                     src={secondServe}
                     alt="Second Serve service"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-[400px] md:h-[500px] object-cover"
                   />
                 </div>
@@ -402,6 +420,8 @@ const Index = () => {
                   <img
                     src={partnerOne}
                     alt="Second Serve partner logo"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-contain"
                   />
                 </div>

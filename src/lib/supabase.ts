@@ -1,8 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const rawSupabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 const configuredAdminEmails = import.meta.env.VITE_SUPABASE_ADMIN_EMAILS ?? "";
+
+const isValidHttpUrl = (value: string | undefined) => {
+  if (!value) {
+    return false;
+  }
+
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
+const supabaseUrl = isValidHttpUrl(rawSupabaseUrl) ? rawSupabaseUrl : undefined;
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabasePublishableKey);
 export const SUPABASE_SITE_CONTENT_ID = "main";

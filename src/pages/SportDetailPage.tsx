@@ -452,12 +452,14 @@ const SportDetailPage = () => {
                   USTA Registration →
                 </a>
               ) : (
-                <Link
-                  to="/contact"
+                <a
+                  href="https://forms.gle/3eQTjDbrti2ghwW17"
+                  target="_blank"
+                  rel="noreferrer"
                   className="inline-block bg-primary px-8 py-4 font-heading font-bold uppercase tracking-wider text-white transition-all duration-200 hover:scale-105"
                 >
                   Join Waitlist →
-                </Link>
+                </a>
               )}
               <Link
                 to="/contact"
@@ -476,7 +478,13 @@ const SportDetailPage = () => {
             <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
               <ScrollReveal direction="left">
                 <div className="scrapbook-rotate-1">
-                  <img src={secondServe} alt="Second Serve" className="h-[400px] w-full object-cover" />
+                  <img
+                    src={secondServe}
+                    alt="Second Serve"
+                    loading="lazy"
+                    decoding="async"
+                    className="h-[400px] w-full object-cover"
+                  />
                 </div>
               </ScrollReveal>
               <ScrollReveal direction="right">

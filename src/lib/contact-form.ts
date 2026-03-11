@@ -12,9 +12,7 @@ export const contactFormSchema = z.object({
   firstName: z.string().trim().min(2, "First name is too short.").max(60, "First name is too long."),
   lastName: z.string().trim().min(2, "Last name is too short.").max(60, "Last name is too long."),
   email: z.string().trim().email("Enter a valid email address.").max(254, "Email is too long."),
-  topic: z.enum(contactTopicOptions, {
-    error: () => ({ message: "Choose a valid topic." }),
-  }),
+  topic: z.enum(contactTopicOptions),
   message: z
     .string()
     .trim()

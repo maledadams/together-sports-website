@@ -41,11 +41,20 @@ That runs the site on `http://localhost:3000`.
 Create Vercel project env vars for:
 
 ```sh
+SITE_URL
 VITE_SUPABASE_URL
 VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY
 ```
 
 For local non-Vercel testing, you can also place them in `.env.local`. See [.env.example](./.env.example).
+
+`SITE_URL` should be your canonical production domain, for example:
+
+```sh
+SITE_URL=https://www.yourdomain.com
+```
+
+It is used to generate `sitemap.xml`, `robots.txt`, and other SEO assets during build.
 
 ## Live Content System
 

@@ -35,6 +35,9 @@ const Navbar = () => {
             <img
               src={headerLogo}
               alt="Together Sports logo"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
               className="relative -translate-y-0.5 h-7 w-auto shrink-0 sm:h-8 md:h-10"
             />
             <span className="flex items-center font-heading text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-[0.08em] sm:tracking-wider leading-none text-[#ffffff]">

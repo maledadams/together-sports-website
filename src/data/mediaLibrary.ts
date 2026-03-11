@@ -10,7 +10,7 @@ import mentorshipImg from "@/assets/mentorship.jpg";
 import partner1 from "@/assets/partner-1.png";
 import partner2 from "@/assets/partner-2.png";
 import partner3 from "@/assets/partner-3.png";
-import partner4 from "@/assets/partner-4.png";
+import partner4 from "@/assets/partner-4.webp";
 import secondServe from "@/assets/second-serve.jpg";
 import tennisAction from "@/assets/tennis-action.jpg";
 

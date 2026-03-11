@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { CONTACT_MESSAGE_MAX_CHARS, contactFormSchema } from "../src/lib/contact-form";
+import { CONTACT_MESSAGE_MAX_CHARS, contactFormSchema } from "../src/lib/contact-form.js";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const contactToEmail = process.env.CONTACT_TO_EMAIL;

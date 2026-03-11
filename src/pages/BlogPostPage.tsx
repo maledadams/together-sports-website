@@ -56,7 +56,14 @@ const BlogPostPage = () => {
 
         {post.image ? (
           <div className="mb-12 overflow-hidden border border-border bg-card">
-            <img src={post.image} alt={post.title} className="w-full h-[260px] md:h-[420px] object-cover" />
+            <img
+              src={post.image}
+              alt={post.title}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              className="w-full h-[260px] md:h-[420px] object-cover"
+            />
           </div>
         ) : null}
 

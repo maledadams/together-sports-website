@@ -60,6 +60,9 @@ type EditableContentContextValue = EditableContentState & {
 const createDefaultContent = (): EditableContentState => hydrateEditableContentState(editableContentSeed);
 const createSerializedSnapshot = (content: EditableContentState) => JSON.stringify(serializeEditableContentState(content));
 const PREVIEW_DRAFT_STORAGE_KEY = "together-sports-preview-draft";
+const UPLOAD_IMAGE_MAX_DIMENSION = 2200;
+const UPLOAD_IMAGE_QUALITY = 0.86;
+
 const readFileAsDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -67,6 +70,75 @@ const readFileAsDataUrl = (file: File) =>
     reader.onerror = () => reject(new Error("Unable to read the selected image."));
     reader.readAsDataURL(file);
   });
+
+const loadImageElement = (file: File) =>
+  new Promise<HTMLImageElement>((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(image);
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Unable to process that image."));
+    };
+
+    image.src = objectUrl;
+  });
+
+const canvasToBlob = (canvas: HTMLCanvasElement, type: string, quality?: number) =>
+  new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("Unable to optimize that image."));
+        return;
+      }
+
+      resolve(blob);
+    }, type, quality);
+  });
+
+const optimizeUploadImage = async (file: File) => {
+  if (typeof window === "undefined" || !file.type.startsWith("image/")) {
+    return file;
+  }
+
+  if (file.type === "image/svg+xml" || file.type === "image/gif") {
+    return file;
+  }
+
+  const image = await loadImageElement(file);
+  const longestSide = Math.max(image.naturalWidth, image.naturalHeight);
+  const scale = longestSide > UPLOAD_IMAGE_MAX_DIMENSION ? UPLOAD_IMAGE_MAX_DIMENSION / longestSide : 1;
+  const targetWidth = Math.max(1, Math.round(image.naturalWidth * scale));
+  const targetHeight = Math.max(1, Math.round(image.naturalHeight * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+
+  const context = canvas.getContext("2d");
+  if (!context) {
+    return file;
+  }
+
+  context.drawImage(image, 0, 0, targetWidth, targetHeight);
+
+  const optimizedBlob = await canvasToBlob(canvas, "image/webp", UPLOAD_IMAGE_QUALITY);
+
+  if (optimizedBlob.size >= file.size) {
+    return file;
+  }
+
+  const optimizedName = file.name.replace(/\.[^/.]+$/, "") || "upload";
+  return new File([optimizedBlob], `${optimizedName}.webp`, {
+    type: "image/webp",
+    lastModified: Date.now(),
+  });
+};
 
 const EditableContentContext = createContext<EditableContentContextValue | null>(null);
 const defaultContent = createDefaultContent();
@@ -301,15 +373,16 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
           throw new Error("Sign in before uploading images.");
         }
 
-        const fileExtension = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-        const fileName = file.name
+        const preparedFile = await optimizeUploadImage(file);
+        const fileExtension = preparedFile.name.split(".").pop()?.toLowerCase() ?? "jpg";
+        const fileName = preparedFile.name
           .replace(/\.[^/.]+$/, "")
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, "")
           .slice(0, 40) || "upload";
         const filePath = `admin/${Date.now()}-${fileName}.${fileExtension}`;
-        const { data, error } = await supabase.storage.from(SUPABASE_SITE_MEDIA_BUCKET).upload(filePath, file, {
+        const { data, error } = await supabase.storage.from(SUPABASE_SITE_MEDIA_BUCKET).upload(filePath, preparedFile, {
           cacheControl: "3600",
           upsert: false,
         });

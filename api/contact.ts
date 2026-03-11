@@ -73,14 +73,34 @@ const createEmailHtml = (payload: {
   topic: string;
   message: string;
 }) => `
-  <div style="font-family:Arial,sans-serif;line-height:1.6;color:#0a0d28;">
-    <h2 style="margin:0 0 16px;">New Together Sports contact form message</h2>
-    <p style="margin:0 0 8px;"><strong>Name:</strong> ${escapeHtml(payload.firstName)} ${escapeHtml(payload.lastName)}</p>
-    <p style="margin:0 0 8px;"><strong>Email:</strong> ${escapeHtml(payload.email)}</p>
-    <p style="margin:0 0 8px;"><strong>Topic:</strong> ${escapeHtml(payload.topic)}</p>
-    <p style="margin:16px 0 8px;"><strong>Message:</strong></p>
-    <div style="white-space:pre-wrap;border:1px solid #d8def0;padding:16px;background:#ffffff;">
-      ${escapeHtml(payload.message)}
+  <div style="margin:0;padding:32px 16px;background:#f5f7ff;font-family:Montserrat,Arial,sans-serif;color:#0a0d28;">
+    <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #dbe4ff;border-radius:24px;overflow:hidden;">
+      <div style="padding:24px 28px;background:#020367;color:#ffffff;">
+        <div style="font-size:12px;letter-spacing:0.24em;text-transform:uppercase;font-weight:700;opacity:0.9;">Together Sports</div>
+        <h1 style="margin:10px 0 0;font-family:'League Spartan',Arial,sans-serif;font-size:40px;line-height:1;font-weight:800;">New Contact Message 💬</h1>
+      </div>
+      <div style="padding:28px;">
+        <div style="display:grid;gap:12px;margin-bottom:20px;">
+          <div style="padding:14px 16px;border:1px solid #d8def0;border-radius:16px;background:#ffffff;">
+            <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4f74d6;margin-bottom:4px;">👤 Name</div>
+            <div style="font-size:18px;font-weight:600;color:#0a0d28;">${escapeHtml(payload.firstName)} ${escapeHtml(payload.lastName)}</div>
+          </div>
+          <div style="padding:14px 16px;border:1px solid #d8def0;border-radius:16px;background:#ffffff;">
+            <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4f74d6;margin-bottom:4px;">📧 Email</div>
+            <div style="font-size:18px;font-weight:600;color:#0a0d28;">${escapeHtml(payload.email)}</div>
+          </div>
+          <div style="padding:14px 16px;border:1px solid #d8def0;border-radius:16px;background:#ffffff;">
+            <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4f74d6;margin-bottom:4px;">🏷️ Topic</div>
+            <div style="font-size:18px;font-weight:600;color:#0a0d28;">${escapeHtml(payload.topic)}</div>
+          </div>
+        </div>
+        <div style="padding:18px 20px;border:1px solid #d8def0;border-radius:20px;background:#ffffff;">
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#4f74d6;margin-bottom:8px;">📝 Message</div>
+          <div style="font-size:16px;line-height:1.7;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;color:#1f223f;">
+            ${escapeHtml(payload.message)}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 `;
@@ -91,13 +111,13 @@ const createEmailText = (payload: {
   email: string;
   topic: string;
   message: string;
-}) => `New Together Sports contact form message
+}) => `Together Sports - New Contact Message
 
-Name: ${payload.firstName} ${payload.lastName}
-Email: ${payload.email}
-Topic: ${payload.topic}
+👤 Name: ${payload.firstName} ${payload.lastName}
+📧 Email: ${payload.email}
+🏷️ Topic: ${payload.topic}
 
-Message:
+📝 Message:
 ${payload.message}`;
 
 export async function POST(request: Request) {

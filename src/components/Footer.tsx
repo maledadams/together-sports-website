@@ -190,7 +190,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 pt-10">
-          <p className="text-xs md:text-sm text-white/60">&copy; {new Date().getFullYear()} Together Sports. All rights reserved.</p>
+          <p className="text-xs md:text-sm text-white/60">Together Sports is a 501(c)(3) nonprofit organization.</p>
         </div>
       </div>
     </footer>

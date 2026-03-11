@@ -1,6 +1,6 @@
 # Together Sports Website
 
-Together Sports is a Vite + React site with a live Supabase-backed content editor for testimonials, partners, team cards, and the experiences page.
+Together Sports is a Vite + React site with a live Supabase-backed edit mode for home content, team cards, partners, blog tags, testimonials, experiences, and sport-page content.
 
 ## Tech Stack
 
@@ -8,9 +8,46 @@ Together Sports is a Vite + React site with a live Supabase-backed content edito
 - React
 - TypeScript
 - Tailwind CSS
-- shadcn-ui
 - Supabase
 - Vercel
+- Resend
+
+## If You Only Want Edit Mode
+
+The easiest way to manage content is not by editing code.
+
+Use:
+- Vercel for hosting and environment variables
+- Supabase for auth, live content, and media uploads
+- `/admin` for the actual editing
+
+That is easier than changing repo files manually because:
+- content updates go live without redeploying
+- images upload directly to Supabase storage
+- admin access is controlled by magic-link sign-in
+- non-technical editors do not need to touch the codebase
+
+The code-based backup/export tools still exist, but they are the fallback, not the preferred workflow.
+
+## Edit Mode
+
+The editor lives at:
+
+```txt
+/admin
+```
+
+With Supabase configured:
+- enter an allowed admin email
+- receive a magic link
+- sign in
+- edit content live
+- upload images
+- click `Save Live`
+
+Without Supabase configured:
+- the editor falls back to the seeded repo defaults
+- changes are not the recommended production workflow
 
 ## Local Development
 
@@ -26,76 +63,102 @@ Run the normal Vite dev server:
 npm run dev
 ```
 
-This project is pinned to `http://localhost:8081` for regular Vite development.
+This project is pinned to `http://localhost:8081` for regular local development.
 
-If you want the app to use Vercel environment variables directly, run:
+If you want to run the Vercel serverless routes locally too, use:
 
 ```sh
 npx vercel dev
 ```
 
-That runs the site on `http://localhost:3000`.
+That runs the app on `http://localhost:3000`.
 
 ## Environment Variables
 
-Create Vercel project env vars for:
+Put these in:
+- `.env.local` for local development
+- Vercel Project Settings -> Environment Variables for deployed environments
+
+Current env vars:
 
 ```sh
-SITE_URL
-VITE_SUPABASE_URL
-VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+SITE_URL=
+VITE_SUPABASE_URL=
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=
+VITE_SUPABASE_ADMIN_EMAILS=
+RESEND_API_KEY=
+CONTACT_TO_EMAIL=
+CONTACT_FROM_EMAIL=
+CONTACT_ALLOWED_ORIGINS=
 ```
 
-For local non-Vercel testing, you can also place them in `.env.local`. See [.env.example](./.env.example).
+What they do:
+- `SITE_URL`
+  - canonical production domain
+  - used for sitemap, robots, canonical tags, and SEO metadata
+- `VITE_SUPABASE_URL`
+  - Supabase project URL
+- `VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
+  - Supabase publishable key
+- `VITE_SUPABASE_ADMIN_EMAILS`
+  - comma-separated allowlist for `/admin`
+- `RESEND_API_KEY`
+  - API key for the contact form email sending
+- `CONTACT_TO_EMAIL`
+  - inbox that receives contact form submissions
+- `CONTACT_FROM_EMAIL`
+  - verified sender used by Resend
+- `CONTACT_ALLOWED_ORIGINS`
+  - optional comma-separated allowed origins for the contact API
 
-`SITE_URL` should be your canonical production domain, for example:
+Example:
 
 ```sh
-SITE_URL=https://www.yourdomain.com
+SITE_URL=https://togethersports.org
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_publishable_key
+VITE_SUPABASE_ADMIN_EMAILS=admin1@gmail.com,admin2@gmail.com
+RESEND_API_KEY=re_xxxxx
+CONTACT_TO_EMAIL=togethersportsorg@gmail.com
+CONTACT_FROM_EMAIL=Together Sports <hello@yourdomain.com>
+CONTACT_ALLOWED_ORIGINS=https://togethersports.org,http://localhost:3000,http://localhost:8081
 ```
 
-It is used to generate `sitemap.xml`, `robots.txt`, and other SEO assets during build.
+See [.env.example](./.env.example).
 
 ## Live Content System
 
-How it works now:
+How it works:
 
-- Public pages load live content from Supabase at runtime.
-- `/admin` requires Supabase sign-in when env vars are configured.
-- `Save Live` writes the whole content object to `site_content`.
-- Uploaded images go into `site-media`.
-- No redeploy is needed for content changes.
-- `Export JSON` / `Import JSON` still exist as backup tools.
+- public pages load live content from Supabase at runtime
+- `/admin` uses Supabase magic-link auth
+- `Save Live` writes the full content object to `site_content`
+- uploaded images go into the `site-media` storage bucket
+- content changes do not require a redeploy
+- export/import JSON tools still exist as backup tools
 
-## Admin Route
+## Supabase Notes
 
-The admin editor lives at:
+The intended production setup is:
+- create the Supabase project
+- create the `site_content` table
+- create the `site-media` bucket
+- add row-level-security policies for allowed admin emails
+- create or invite the allowed admin users in Supabase Auth
+- add the Supabase env vars in Vercel
 
-```txt
-/admin
-```
-
-When Supabase is configured:
-
-- sign in by magic link
-- edit testimonials, partners, and team content
-- upload images to Supabase Storage
-- save the current draft live to Supabase
-
-When Supabase is not configured:
-
-- the editor falls back to the default repo seed content
+This is the recommended path for editors. It is easier and safer than maintaining content directly in the repo.
 
 ## Backup Content Workflow
 
-JSON backup tools still exist if you want snapshots of the content:
+JSON backup tools still exist if you want content snapshots:
 
-- Export from `/admin`
-- Save the file as `content/editable-content.json`
-- Run `npm run apply:content`
-- Commit `content/editable-content.json` and `src/data/editableContentSeed.ts`
+- export from `/admin`
+- save the file as `content/editable-content.json`
+- run `npm run apply:content`
+- commit `content/editable-content.json` and `src/data/editableContentSeed.ts`
 
-This backup flow is optional now that live content is stored in Supabase.
+This backup flow is optional.
 
 ## Build
 
@@ -107,4 +170,11 @@ npm run build
 
 ## Deployment
 
-Deploy the project on Vercel and add the two `VITE_SUPABASE_*` environment variables in the Vercel project settings for `Development`, `Preview`, and `Production`.
+Deploy on Vercel with:
+- Framework Preset: `Vite`
+- Root Directory: `./`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Install Command: `npm install`
+
+Then add the env vars above in Vercel for `Development`, `Preview`, and `Production`.

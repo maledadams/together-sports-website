@@ -1,7 +1,10 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useEditableContent } from "@/lib/editable-content";
+
+const BLOG_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 const formatDate = (value: string) =>
   new Date(value).toLocaleDateString("en-US", {
@@ -11,9 +14,17 @@ const formatDate = (value: string) =>
   });
 
 const BlogPage = () => {
-  const { blogPosts } = useEditableContent();
+  const { blogPosts, refreshContent } = useEditableContent();
   const featured = blogPosts.find((post) => post.featured) ?? blogPosts[0];
   const posts = featured ? blogPosts.filter((post) => post.slug !== featured.slug) : blogPosts;
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      refreshContent().catch(console.error);
+    }, BLOG_REFRESH_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [refreshContent]);
 
   return (
     <div className="overflow-hidden">

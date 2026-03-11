@@ -1,5 +1,8 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useEditableContent } from "@/lib/editable-content";
+
+const BLOG_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 const formatDate = (value: string) =>
   new Date(value).toLocaleDateString("en-US", {
@@ -10,8 +13,16 @@ const formatDate = (value: string) =>
 
 const BlogPostPage = () => {
   const { slug } = useParams();
-  const { blogPosts } = useEditableContent();
+  const { blogPosts, refreshContent } = useEditableContent();
   const post = blogPosts.find((entry) => entry.slug === slug);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      refreshContent().catch(console.error);
+    }, BLOG_REFRESH_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [refreshContent]);
 
   if (!post) {
     return (

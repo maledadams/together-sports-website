@@ -63,6 +63,17 @@ const PREVIEW_DRAFT_STORAGE_KEY = "together-sports-preview-draft";
 const UPLOAD_IMAGE_MAX_DIMENSION = 2200;
 const UPLOAD_IMAGE_QUALITY = 0.86;
 
+const mergeLiveBlogPosts = (savedPosts: BlogPost[], livePosts: BlogPost[]) =>
+  livePosts.map((post) => {
+    const savedPost = savedPosts.find((entry) => entry.slug === post.slug);
+
+    return {
+      ...post,
+      featured: savedPost?.featured ?? false,
+      tag: savedPost?.tag ?? "",
+    };
+  });
+
 const readFileAsDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -211,6 +222,27 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
       if (params.get("preview") === "1" && previewDraft) {
         try {
           nextContent = parseEditableContentImport(JSON.parse(previewDraft));
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+
+      if (params.get("preview") !== "1") {
+        try {
+          const response = await fetch("/api/blog-posts");
+          if (response.ok) {
+            const payload = (await response.json()) as { posts?: BlogPost[] };
+            if (Array.isArray(payload.posts) && payload.posts.length > 0) {
+              nextContent = {
+                ...nextContent,
+                blogPosts: mergeLiveBlogPosts(nextContent.blogPosts, payload.posts),
+              };
+            }
+          }
         } catch (error) {
           console.error(error);
         }

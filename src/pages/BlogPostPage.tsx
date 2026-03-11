@@ -20,7 +20,7 @@ const BlogPostPage = () => {
           <p className="font-body font-bold uppercase tracking-[0.3em] text-accent text-sm mb-4">Blog</p>
           <h1 className="font-heading text-5xl md:text-7xl font-black uppercase mb-6">Post Not Found</h1>
           <p className="text-muted-foreground text-lg mb-8">
-            That article is not available in the current synced Substack feed.
+            That article is not available right now.
           </p>
           <Link
             to="/blog"

@@ -194,7 +194,7 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
   const [tennisLessonVideos, setTennisLessonVideos] = useState<TennisLessonVideo[]>(() => defaultContent.tennisLessonVideos);
   const [impactMetricsSection, setImpactMetricsSection] = useState<ImpactMetricsSection>(() => defaultContent.impactMetricsSection);
   const [lastSavedSnapshot, setLastSavedSnapshot] = useState(defaultSnapshot);
-  const [isLoadingContent, setIsLoadingContent] = useState(isSupabaseConfigured);
+  const [isLoadingContent, setIsLoadingContent] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [authLoading, setAuthLoading] = useState(isSupabaseConfigured);
   const [user, setUser] = useState<User | null>(null);

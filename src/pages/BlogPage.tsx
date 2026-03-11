@@ -14,7 +14,7 @@ const formatDate = (value: string) =>
   });
 
 const BlogPage = () => {
-  const { blogPosts, refreshContent } = useEditableContent();
+  const { blogPosts, refreshContent, isLoadingContent } = useEditableContent();
   const featured = blogPosts.find((post) => post.featured) ?? blogPosts[0];
   const posts = featured ? blogPosts.filter((post) => post.slug !== featured.slug) : blogPosts;
 
@@ -25,6 +25,33 @@ const BlogPage = () => {
 
     return () => window.clearInterval(intervalId);
   }, [refreshContent]);
+
+  if (isLoadingContent) {
+    return (
+      <div className="overflow-hidden">
+        <section className="relative overflow-hidden bg-[#ab9bfa]">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-24">
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="font-heading text-5xl sm:text-6xl md:text-[5.25rem] font-black uppercase leading-[0.95] mb-4 text-white">
+                <span className="sm:whitespace-nowrap">The </span>
+                <span className="sm:whitespace-nowrap">Blog</span>
+              </h1>
+              <p className="text-white font-bold text-lg md:text-xl max-w-2xl mx-auto font-body">
+                Stories, updates, and moments from Together Sports, all in one place on the site.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section className="py-16 md:py-18">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="border border-border bg-card p-8 md:p-12">
+              <p className="text-muted-foreground text-lg">Loading latest stories...</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-hidden">

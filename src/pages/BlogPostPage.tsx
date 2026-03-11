@@ -13,7 +13,7 @@ const formatDate = (value: string) =>
 
 const BlogPostPage = () => {
   const { slug } = useParams();
-  const { blogPosts, refreshContent } = useEditableContent();
+  const { blogPosts, refreshContent, isLoadingContent } = useEditableContent();
   const post = blogPosts.find((entry) => entry.slug === slug);
 
   useEffect(() => {
@@ -23,6 +23,17 @@ const BlogPostPage = () => {
 
     return () => window.clearInterval(intervalId);
   }, [refreshContent]);
+
+  if (isLoadingContent) {
+    return (
+      <section className="py-24 md:py-32">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="font-heading text-5xl md:text-7xl font-black uppercase mb-6">Loading Post</h1>
+          <p className="text-muted-foreground text-lg">Fetching the latest article...</p>
+        </div>
+      </section>
+    );
+  }
 
   if (!post) {
     return (

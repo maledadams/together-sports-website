@@ -1,5 +1,7 @@
 import { fetchSubstackPosts } from "../scripts/substack-feed.mjs";
 
+const BLOG_CACHE_CONTROL = "public, s-maxage=300, stale-while-revalidate=300";
+
 export async function GET() {
   try {
     const posts = await fetchSubstackPosts();
@@ -8,7 +10,7 @@ export async function GET() {
       {
         status: 200,
         headers: {
-          "Cache-Control": "private, no-store",
+          "Cache-Control": BLOG_CACHE_CONTROL,
         },
       },
     );
@@ -19,7 +21,7 @@ export async function GET() {
       {
         status: 502,
         headers: {
-          "Cache-Control": "private, no-store",
+          "Cache-Control": BLOG_CACHE_CONTROL,
         },
       },
     );

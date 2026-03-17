@@ -81,7 +81,7 @@ const experiences: Experience[] = [
     id: "video-1",
     type: "video",
     videoUrl: "",
-    videoTitle: "Sample Highlight Video",
+    videoTitle: "Sample Video",
   },
   {
     id: "photo-4",

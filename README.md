@@ -2,6 +2,8 @@
 
 Together Sports is a Vite + React site with a live Supabase-backed edit mode for home content, team cards, partners, blog tags, testimonials, experiences, and sport-page content.
 
+![sdfdsfdsfdsf](https://github.com/user-attachments/assets/714f627e-3d99-4914-9d3c-9e06fdfeaed5)
+
 ## Tech Stack
 
 - Vite

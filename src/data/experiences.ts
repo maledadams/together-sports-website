@@ -1,7 +1,7 @@
 import heroImage from "@/assets/hero-sports.jpg";
 import image0903 from "@/assets/IMG_0903.jpg";
 import image3782 from "@/assets/IMG_3782.jpg";
-import julian from "@assests/julian.jpg";
+import mentorshipImg from "@/assets/mentorship.jpg";
 
 export type ExperienceType = "quote" | "parent" | "photo" | "video";
 
@@ -77,7 +77,12 @@ const experiences: Experience[] = [
     image: mentorshipImg,
     caption: "Mentorship is part of the experience too.",
   },
-
+  {
+    id: "video-1",
+    type: "video",
+    videoUrl: "",
+    videoTitle: "Sample Video",
+  },
   {
     id: "photo-4",
     type: "photo",

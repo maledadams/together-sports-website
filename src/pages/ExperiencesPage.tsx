@@ -83,7 +83,7 @@ const VideoCard = ({ item, index }: { item: Experience; index: number }) => (
 );
 
 const ExperiencesPage = () => {
-  const { experiences } = useEditableContent();
+import experiences from "@/data/experiences";
   const quotes = experiences.filter((e) => e.type === "quote");
   const parentQuotes = experiences.filter((e) => e.type === "parent");
   const photos = experiences.filter((e) => e.type === "photo" && e.image);

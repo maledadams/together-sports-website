@@ -77,12 +77,7 @@ const experiences: Experience[] = [
     image: mentorshipImg,
     caption: "Mentorship is part of the experience too.",
   },
-  {
-    id: "video-1",
-    type: "video",
-    videoUrl: "",
-    videoTitle: "Sample Video",
-  },
+
   {
     id: "photo-4",
     type: "photo",

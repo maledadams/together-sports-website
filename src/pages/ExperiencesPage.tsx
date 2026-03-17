@@ -87,7 +87,6 @@ const ExperiencesPage = () => {
   const quotes = experiences.filter((e) => e.type === "quote");
   const parentQuotes = experiences.filter((e) => e.type === "parent");
   const photos = experiences.filter((e) => e.type === "photo" && e.image);
-  const videos = experiences.filter((e) => e.type === "video" && e.videoUrl);
 
   return (
     <div className="overflow-hidden">
@@ -161,22 +160,7 @@ const ExperiencesPage = () => {
         </section>
       ) : null}
 
-      {videos.length > 0 ? (
-        <section className="py-20 md:py-28">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ScrollReveal>
-              <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-12 text-center">
-                Watch <span className="brush-underline">Us</span> Play
-              </h2>
-            </ScrollReveal>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {videos.map((v, i) => (
-                <VideoCard key={v.id} item={v} index={i} />
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
+  
     </div>
   );
 };

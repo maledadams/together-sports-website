@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { MapPin } from "lucide-react";
 import type { SVGProps } from "react";
 import footerLogo from "@/assets/SPORTSTOGETHERHANDLOGOFORDARKBACKS.png";
 
@@ -181,10 +180,6 @@ const Footer = () => {
               <Link to="/contact" className="text-base font-[Montserrat] font-semibold transition-colors duration-200 hover:text-white/75">
                 Contact Page
               </Link>
-              <p className="flex items-center gap-3 text-base font-medium leading-relaxed">
-                <MapPin size={16} className="shrink-0 text-[#f6a15c]" />
-                <span>New York</span>
-              </p>
             </div>
           </div>
         </div>

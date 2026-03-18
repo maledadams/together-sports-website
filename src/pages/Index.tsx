@@ -87,11 +87,53 @@ const sportsCtaSpins = [
   },
 ];
 
+const MapEmbedCard = ({
+  embedUrl,
+  title,
+  className,
+}: {
+  embedUrl: string;
+  title: string;
+  className?: string;
+}) => (
+  <div
+    className={`relative overflow-hidden border-2 border-border bg-white ${className ?? ""}`}
+    onWheel={(event) => event.preventDefault()}
+  >
+    <iframe
+      src={embedUrl}
+      width="100%"
+      height="100%"
+      style={{ border: 0 }}
+      allowFullScreen={false}
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+      title={title}
+    />
+    <div
+      className="absolute inset-0"
+      style={{ background: "transparent", cursor: "default" }}
+      onClick={(event) => {
+        const rect = (event.currentTarget as HTMLDivElement).getBoundingClientRect();
+        const y = event.clientY - rect.top;
+        const x = event.clientX - rect.left;
+        if (y > rect.height - 80 && x > rect.width - 80) {
+          event.currentTarget.style.pointerEvents = "none";
+          setTimeout(() => {
+            (event.currentTarget as HTMLDivElement).style.pointerEvents = "auto";
+          }, 100);
+        }
+      }}
+    />
+  </div>
+);
+
 const Index = () => {
-  const { experiences, impactMetricsSection } = useEditableContent();
+  const { experiences, impactMetricsSection, otherLocationsSection } = useEditableContent();
   const featuredTestimonials = experiences
     .filter((item) => item.type === "quote" || item.type === "parent")
     .slice(0, 3);
+  const otherLocations = otherLocationsSection.items.filter((item) => item.embedUrl.trim());
 
   return (
     <div className="overflow-hidden">
@@ -454,49 +496,64 @@ const Index = () => {
       <section className="py-20 md:py-32 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 whitespace-nowrap">
-              Our <span className="brush-underline inline-block">Location</span>
-              <span className="ml-2 inline-block text-[0.9em] normal-case align-[0.02em] md:ml-3">
-                📍
-              </span>
+            <h2 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-center">
+              <span className="mr-2 inline-block text-[0.9em] normal-case align-[0.02em] md:mr-3">📍</span>
+              Main Location
+              <span className="ml-2 inline-block text-[0.9em] normal-case align-[0.02em] md:ml-3">📍</span>
             </h2>
-            <p className="text-muted-foreground text-lg mb-12">
+            <p className="text-muted-foreground text-lg mb-12 text-center">
               Based in New York City, serving communities across the five boroughs.
             </p>
           </ScrollReveal>
 
           <ScrollReveal>
-            <div
-              className="relative w-full h-[400px] md:h-[500px] border-2 border-border overflow-hidden"
-              onWheel={(e) => e.preventDefault()}
-            >
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.25280949658!2d-74.11976389828046!3d40.69766374859258!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1e0!2e0"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={false}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Together Sports NYC Location"
-              />
-              <div
-                className="absolute inset-0"
-                style={{ background: "transparent", cursor: "default" }}
-                onClick={(e) => {
-                  const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-                  const y = e.clientY - rect.top;
-                  const x = e.clientX - rect.left;
-                  if (y > rect.height - 80 && x > rect.width - 80) {
-                    e.currentTarget.style.pointerEvents = "none";
-                    setTimeout(() => {
-                      (e.currentTarget as HTMLDivElement).style.pointerEvents = "auto";
-                    }, 100);
-                  }
-                }}
-              />
-            </div>
+            <MapEmbedCard
+              embedUrl="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.25280949658!2d-74.11976389828046!3d40.69766374859258!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1e0!2e0"
+              title="Together Sports main location"
+              className="h-[400px] w-full md:h-[500px]"
+            />
           </ScrollReveal>
+
+          {otherLocations.length > 0 ? (
+            <div className="mt-16 md:mt-20">
+              <ScrollReveal>
+                <h3 className="font-heading text-5xl md:text-7xl font-black uppercase mb-4 text-center">
+                  {otherLocationsSection.title?.trim().toLowerCase() === "other locations" ? (
+                    <>
+                      <span className="mr-2 inline-block text-[0.9em] normal-case align-[0.02em] md:mr-3">🌍</span>
+                      <span className="brush-underline inline-block">Other</span> Locations
+                    </>
+                  ) : (
+                    <span className="inline-block">
+                      <span className="mr-2 inline-block text-[0.9em] normal-case align-[0.02em] md:mr-3">🌍</span>
+                      {otherLocationsSection.title || "Other Locations"}
+                    </span>
+                  )}
+                  <span className="ml-2 inline-block text-[0.9em] normal-case align-[0.02em] md:ml-3">🌎</span>
+                </h3>
+                <p className="text-muted-foreground text-lg mb-12 text-center">
+                  Additional locations are grouped by state or country as the program grows.
+                </p>
+              </ScrollReveal>
+
+              <div className="mx-auto flex max-w-[1016px] flex-wrap justify-center gap-8">
+                {otherLocations.map((location, index) => (
+                  <ScrollReveal key={location.id} delay={index * 0.08}>
+                    <div className="w-[320px] shrink-0">
+                      <MapEmbedCard
+                        embedUrl={location.embedUrl}
+                        title={location.name || "Together Sports location"}
+                        className="h-[220px] w-[320px]"
+                      />
+                      <p className="mt-4 text-center font-heading text-2xl font-black uppercase text-foreground">
+                        {location.name}
+                      </p>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </section>
 

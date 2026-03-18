@@ -9,7 +9,7 @@ import { mediaLibrary } from "@/data/mediaLibrary";
 import type { Experience, ExperienceType } from "@/data/experiences";
 import type { Partner } from "@/data/partners";
 import type { TeamPerson, TeamSection, TeamSocialPlatform } from "@/data/team";
-import type { TennisLessonVideo } from "@/lib/editable-content-format";
+import type { OtherLocation, TennisLessonVideo } from "@/lib/editable-content-format";
 import { useEditableContent } from "@/lib/editable-content";
 import { normalizeYouTubeEmbedUrl } from "@/lib/youtube";
 
@@ -258,12 +258,14 @@ const AdminPage = () => {
     teamSections,
     tennisLessonVideos,
     impactMetricsSection,
+    otherLocationsSection,
     setBlogPosts,
     setExperiences,
     setPartners,
     setTeamSections,
     setTennisLessonVideos,
     setImpactMetricsSection,
+    setOtherLocationsSection,
     resetAll,
     saveContent,
     refreshContent,
@@ -411,6 +413,13 @@ const AdminPage = () => {
 
   const updateImpactMetric = (id: string, field: "title" | "value", value: string) => {
     setImpactMetricsSection((current) => ({
+      ...current,
+      items: current.items.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
+    }));
+  };
+
+  const updateOtherLocation = (id: string, field: keyof Omit<OtherLocation, "id">, value: string) => {
+    setOtherLocationsSection((current) => ({
       ...current,
       items: current.items.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
     }));
@@ -616,106 +625,201 @@ const AdminPage = () => {
           </TabsList>
 
           <TabsContent value="home">
-            <EditorCard>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="font-heading text-2xl font-black uppercase">Impact Metrics</p>
-                  <p className="text-muted-foreground text-sm">Controls the home-page metrics block under the hero.</p>
+            <div className="space-y-6">
+              <EditorCard>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-heading text-2xl font-black uppercase">Impact Metrics</p>
+                    <p className="text-muted-foreground text-sm">Controls the home-page metrics block under the hero.</p>
+                  </div>
+                  <label className="flex min-h-[54px] items-center gap-3 border border-border bg-white px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={impactMetricsSection.isVisible}
+                      onChange={(event) =>
+                        setImpactMetricsSection((current) => ({
+                          ...current,
+                          isVisible: event.target.checked,
+                        }))
+                      }
+                      className="h-4 w-4 accent-[hsl(var(--primary))]"
+                    />
+                    <span className="text-sm text-foreground">
+                      {impactMetricsSection.isVisible ? "Section is visible on the live site." : "Section is hidden on the live site."}
+                    </span>
+                  </label>
                 </div>
-                <label className="flex min-h-[54px] items-center gap-3 border border-border bg-white px-4 py-3">
-                  <input
-                    type="checkbox"
-                    checked={impactMetricsSection.isVisible}
-                    onChange={(event) =>
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
                       setImpactMetricsSection((current) => ({
                         ...current,
-                        isVisible: event.target.checked,
+                        items:
+                          current.items.length >= 6
+                            ? current.items
+                            : [
+                                ...current.items,
+                                {
+                                  id: createId("metric"),
+                                  title: "New Metric",
+                                  value: "0",
+                                  color: impactMetricColors[current.items.length % impactMetricColors.length],
+                                },
+                              ],
                       }))
                     }
-                    className="h-4 w-4 accent-[hsl(var(--primary))]"
-                  />
-                  <span className="text-sm text-foreground">
-                    {impactMetricsSection.isVisible ? "Section is visible on the live site." : "Section is hidden on the live site."}
-                  </span>
-                </label>
-              </div>
+                    disabled={impactMetricsSection.items.length >= 6}
+                    className="px-4 py-3 bg-primary text-white font-heading font-bold uppercase text-sm tracking-wider disabled:opacity-60"
+                  >
+                    + Add Metric
+                  </button>
+                  <p className="self-center text-sm text-muted-foreground">
+                    Keep between 4 and 6 metrics.
+                  </p>
+                </div>
 
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setImpactMetricsSection((current) => ({
-                      ...current,
-                      items:
-                        current.items.length >= 6
-                          ? current.items
-                          : [
-                              ...current.items,
-                              {
-                                id: createId("metric"),
-                                title: "New Metric",
-                                value: "0",
-                                color: impactMetricColors[current.items.length % impactMetricColors.length],
-                              },
-                            ],
-                    }))
-                  }
-                  disabled={impactMetricsSection.items.length >= 6}
-                  className="px-4 py-3 bg-primary text-white font-heading font-bold uppercase text-sm tracking-wider disabled:opacity-60"
-                >
-                  + Add Metric
-                </button>
-                <p className="self-center text-sm text-muted-foreground">
-                  Keep between 4 and 6 metrics.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {impactMetricsSection.items.map((item) => (
-                  <div key={item.id} className="border border-border bg-white p-5 space-y-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div
-                        className="inline-flex rounded-sm px-3 py-2 font-heading text-sm font-black uppercase"
-                        style={{ color: item.color, backgroundColor: `${item.color}1A` }}
-                      >
-                        {item.color}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {impactMetricsSection.items.map((item) => (
+                    <div key={item.id} className="border border-border bg-white p-5 space-y-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div
+                          className="inline-flex rounded-sm px-3 py-2 font-heading text-sm font-black uppercase"
+                          style={{ color: item.color, backgroundColor: `${item.color}1A` }}
+                        >
+                          {item.color}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setImpactMetricsSection((current) => ({
+                              ...current,
+                              items: current.items.filter((entry) => entry.id !== item.id),
+                            }))
+                          }
+                          disabled={impactMetricsSection.items.length <= 4}
+                          className="px-4 py-2 border border-border bg-card text-foreground font-heading font-bold uppercase text-xs tracking-wider disabled:opacity-60"
+                        >
+                          Remove
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setImpactMetricsSection((current) => ({
-                            ...current,
-                            items: current.items.filter((entry) => entry.id !== item.id),
-                          }))
-                        }
-                        disabled={impactMetricsSection.items.length <= 4}
-                        className="px-4 py-2 border border-border bg-card text-foreground font-heading font-bold uppercase text-xs tracking-wider disabled:opacity-60"
-                      >
-                        Remove
-                      </button>
+                      <div className="space-y-2">
+                        <p className={labelClass}>Metric Title</p>
+                        <input
+                          className={inputClass}
+                          value={item.title}
+                          onChange={(event) => updateImpactMetric(item.id, "title", event.target.value)}
+                          placeholder="Metric title"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className={labelClass}>Metric Value</p>
+                        <input
+                          className={inputClass}
+                          value={item.value}
+                          onChange={(event) => updateImpactMetric(item.id, "value", event.target.value)}
+                          placeholder="250+"
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <p className={labelClass}>Metric Title</p>
-                      <input
-                        className={inputClass}
-                        value={item.title}
-                        onChange={(event) => updateImpactMetric(item.id, "title", event.target.value)}
-                        placeholder="Metric title"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className={labelClass}>Metric Value</p>
-                      <input
-                        className={inputClass}
-                        value={item.value}
-                        onChange={(event) => updateImpactMetric(item.id, "value", event.target.value)}
-                        placeholder="250+"
-                      />
-                    </div>
+                  ))}
+                </div>
+              </EditorCard>
+
+              <EditorCard>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-heading text-2xl font-black uppercase">Other Locations</p>
+                    <p className="text-muted-foreground text-sm">
+                      Controls the small location maps shown under the main location on the home page.
+                    </p>
                   </div>
-                ))}
-              </div>
-            </EditorCard>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOtherLocationsSection((current) => ({
+                        ...current,
+                        items: [
+                          ...current.items,
+                          {
+                            id: createId("location"),
+                            name: "New Location",
+                            embedUrl: "",
+                          },
+                        ],
+                      }))
+                    }
+                    className="px-4 py-3 bg-primary text-white font-heading font-bold uppercase text-sm tracking-wider"
+                  >
+                    + Add Location
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <p className={labelClass}>Section Title</p>
+                  <input
+                    className={inputClass}
+                    value={otherLocationsSection.title}
+                    onChange={(event) =>
+                      setOtherLocationsSection((current) => ({
+                        ...current,
+                        title: event.target.value,
+                      }))
+                    }
+                    placeholder="Other Locations"
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  {otherLocationsSection.items.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No extra locations added yet.</p>
+                  ) : null}
+
+                  {otherLocationsSection.items.map((item) => (
+                    <div key={item.id} className="border border-border bg-white p-5 space-y-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-heading text-xl font-black uppercase">{item.name || "Location"}</p>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOtherLocationsSection((current) => ({
+                              ...current,
+                              items: current.items.filter((entry) => entry.id !== item.id),
+                            }))
+                          }
+                          className="px-4 py-2 border border-border bg-card text-foreground font-heading font-bold uppercase text-xs tracking-wider"
+                        >
+                          Remove
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <p className={labelClass}>Location Name</p>
+                          <input
+                            className={inputClass}
+                            value={item.name}
+                            onChange={(event) => updateOtherLocation(item.id, "name", event.target.value)}
+                            placeholder="New York, USA"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className={labelClass}>Google Maps Embed URL</p>
+                          <input
+                            type="url"
+                            className={inputClass}
+                            value={item.embedUrl}
+                            onChange={(event) => updateOtherLocation(item.id, "embedUrl", event.target.value)}
+                            placeholder="https://www.google.com/maps/embed?pb=..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </EditorCard>
+            </div>
           </TabsContent>
 
           <TabsContent value="testimonials">

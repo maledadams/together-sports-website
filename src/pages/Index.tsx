@@ -531,12 +531,9 @@ const Index = () => {
                   )}
                   <span className="ml-2 inline-block text-[0.9em] normal-case align-[0.02em] md:ml-3">🌎</span>
                 </h3>
-                <p className="text-muted-foreground text-lg mb-12 text-center">
-                  Additional locations are grouped by state or country as the program grows.
-                </p>
               </ScrollReveal>
 
-              <div className="mx-auto flex max-w-[1016px] flex-wrap justify-center gap-8">
+              <div className="mx-auto mt-12 flex max-w-[1016px] flex-wrap justify-center gap-8">
                 {otherLocations.map((location, index) => (
                   <ScrollReveal key={location.id} delay={index * 0.08}>
                     <div className="w-[320px] shrink-0">

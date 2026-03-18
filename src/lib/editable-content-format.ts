@@ -22,6 +22,17 @@ export type ImpactMetricsSection = {
   items: ImpactMetric[];
 };
 
+export type OtherLocation = {
+  id: string;
+  name: string;
+  embedUrl: string;
+};
+
+export type OtherLocationsSection = {
+  title: string;
+  items: OtherLocation[];
+};
+
 export type EditableContentState = {
   blogPosts: BlogPost[];
   experiences: Experience[];
@@ -29,6 +40,7 @@ export type EditableContentState = {
   teamSections: TeamSection[];
   tennisLessonVideos: TennisLessonVideo[];
   impactMetricsSection: ImpactMetricsSection;
+  otherLocationsSection: OtherLocationsSection;
 };
 
 export type PortableEditableContentState = EditableContentState;
@@ -108,6 +120,12 @@ export const serializeEditableContentState = (
       ? content.impactMetricsSection.items.map((item) => ({ ...item }))
       : [],
   },
+  otherLocationsSection: {
+    title: typeof content.otherLocationsSection?.title === "string" ? content.otherLocationsSection.title : "",
+    items: Array.isArray(content.otherLocationsSection?.items)
+      ? content.otherLocationsSection.items.map((item) => ({ ...item }))
+      : [],
+  },
 });
 
 export const hydrateEditableContentState = (
@@ -143,6 +161,16 @@ export const hydrateEditableContentState = (
           isVisible: false,
           items: [],
         },
+  otherLocationsSection:
+    content.otherLocationsSection && Array.isArray(content.otherLocationsSection.items)
+      ? {
+          title: typeof content.otherLocationsSection.title === "string" ? content.otherLocationsSection.title : "",
+          items: content.otherLocationsSection.items.map((item) => ({ ...item })),
+        }
+      : {
+          title: "Other Locations",
+          items: [],
+        },
 });
 
 const hasContentShape = (value: unknown): value is PortableEditableContentState =>
@@ -160,6 +188,10 @@ export const parseEditableContentImport = (input: unknown): EditableContentState
       tennisLessonVideos: [],
       impactMetricsSection: {
         isVisible: false,
+        items: [],
+      },
+      otherLocationsSection: {
+        title: "Other Locations",
         items: [],
       },
     });
@@ -186,6 +218,10 @@ export const parseEditableContentImport = (input: unknown): EditableContentState
       tennisLessonVideos: [],
       impactMetricsSection: {
         isVisible: false,
+        items: [],
+      },
+      otherLocationsSection: {
+        title: "Other Locations",
         items: [],
       },
     });

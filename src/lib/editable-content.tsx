@@ -22,6 +22,7 @@ import {
   type EditableContentExportFile,
   type EditableContentState,
   type ImpactMetricsSection,
+  type OtherLocationsSection,
   type TennisLessonVideo,
 } from "@/lib/editable-content-format";
 import {
@@ -39,6 +40,7 @@ type EditableContentContextValue = EditableContentState & {
   setTeamSections: Dispatch<SetStateAction<TeamSection[]>>;
   setTennisLessonVideos: Dispatch<SetStateAction<TennisLessonVideo[]>>;
   setImpactMetricsSection: Dispatch<SetStateAction<ImpactMetricsSection>>;
+  setOtherLocationsSection: Dispatch<SetStateAction<OtherLocationsSection>>;
   resetAll: () => void;
   saveContent: () => Promise<void>;
   refreshContent: () => Promise<void>;
@@ -193,6 +195,7 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
   const [teamSections, setTeamSections] = useState<TeamSection[]>(() => defaultContent.teamSections);
   const [tennisLessonVideos, setTennisLessonVideos] = useState<TennisLessonVideo[]>(() => defaultContent.tennisLessonVideos);
   const [impactMetricsSection, setImpactMetricsSection] = useState<ImpactMetricsSection>(() => defaultContent.impactMetricsSection);
+  const [otherLocationsSection, setOtherLocationsSection] = useState<OtherLocationsSection>(() => defaultContent.otherLocationsSection);
   const [lastSavedSnapshot, setLastSavedSnapshot] = useState(defaultSnapshot);
   const [isLoadingContent, setIsLoadingContent] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -206,6 +209,7 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
     setTeamSections(next.teamSections);
     setTennisLessonVideos(next.tennisLessonVideos);
     setImpactMetricsSection(next.impactMetricsSection);
+    setOtherLocationsSection(next.otherLocationsSection);
   };
 
   const savePreviewDraft = () => {
@@ -220,6 +224,7 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
       teamSections,
       tennisLessonVideos,
       impactMetricsSection,
+      otherLocationsSection,
     });
 
     window.localStorage.setItem(PREVIEW_DRAFT_STORAGE_KEY, JSON.stringify(previewContent));
@@ -343,8 +348,17 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
   }, []);
 
   const currentSnapshot = useMemo(
-    () => createSerializedSnapshot({ blogPosts, experiences, partners, teamSections, tennisLessonVideos, impactMetricsSection }),
-    [blogPosts, experiences, partners, teamSections, tennisLessonVideos, impactMetricsSection],
+    () =>
+      createSerializedSnapshot({
+        blogPosts,
+        experiences,
+        partners,
+        teamSections,
+        tennisLessonVideos,
+        impactMetricsSection,
+        otherLocationsSection,
+      }),
+    [blogPosts, experiences, partners, teamSections, tennisLessonVideos, impactMetricsSection, otherLocationsSection],
   );
   const hasUnsavedChanges = currentSnapshot !== lastSavedSnapshot;
 
@@ -357,11 +371,13 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
       teamSections,
       tennisLessonVideos,
       impactMetricsSection,
+      otherLocationsSection,
       setExperiences,
       setPartners,
       setTeamSections,
       setTennisLessonVideos,
       setImpactMetricsSection,
+      setOtherLocationsSection,
       resetAll: () => {
         const defaults = createDefaultContent();
         applyContent(defaults);
@@ -386,6 +402,7 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
             teamSections,
             tennisLessonVideos,
             impactMetricsSection,
+            otherLocationsSection,
           });
           const { error } = await supabase.from("site_content").upsert(
             {
@@ -440,7 +457,15 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
         return publicUrlData.publicUrl;
       },
       exportContent: () =>
-        createEditableContentExport({ blogPosts, experiences, partners, teamSections, tennisLessonVideos, impactMetricsSection }),
+        createEditableContentExport({
+          blogPosts,
+          experiences,
+          partners,
+          teamSections,
+          tennisLessonVideos,
+          impactMetricsSection,
+          otherLocationsSection,
+        }),
       importContent: (input) => {
         const next = parseEditableContentImport(input);
         applyContent(next);
@@ -489,6 +514,7 @@ export const EditableContentProvider = ({ children }: { children: ReactNode }) =
       teamSections,
       tennisLessonVideos,
       impactMetricsSection,
+      otherLocationsSection,
       currentSnapshot,
       hasUnsavedChanges,
       isLoadingContent,

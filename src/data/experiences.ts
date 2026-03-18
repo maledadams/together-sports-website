@@ -80,8 +80,8 @@ const experiences: Experience[] = [
   {
     id: "video-1",
     type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    videoTitle: "Sample Highlight Video",
+    videoUrl: "",
+    videoTitle: "Sample Video",
   },
   {
     id: "photo-4",

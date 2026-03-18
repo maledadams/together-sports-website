@@ -217,6 +217,10 @@ const editableContentSeed: PortableEditableContentState = {
         "color": "#84a6ff"
       }
     ]
+  },
+  "otherLocationsSection": {
+    "title": "Other Locations",
+    "items": []
   }
 };
 
